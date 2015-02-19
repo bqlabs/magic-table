@@ -6,10 +6,10 @@ import numpy as np
 
 __author__ = 'def'
 
-def x(t, r = 90):
+def x(t, r = 45):
     return  r * np.cos(t)
 
-def y(t, r = 90):
+def y(t, r = 45):
     return  r * np.sin(t)
 
 if __name__ == '__main__':
