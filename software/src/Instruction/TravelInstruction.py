@@ -13,6 +13,6 @@ class TravelInstruction(Instruction):
     def generate_code(self):
         commands = "M42 P%d S0 ;turn off led\n" % self.led[0]
         commands +="M42 P%d S0 ;turn off led\n" % self.led[1]
-        commands +="M42 P%d S25 ;turn off led\n" % self.led[2]
+        commands +="M42 P%d S0 ;turn off led\n" % self.led[2]
         commands +="G1 F%d X%d Y%d\n" % (self.speed, self.destination[0], self.destination[1])
         return commands

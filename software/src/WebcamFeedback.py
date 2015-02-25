@@ -7,7 +7,7 @@ __author__ = 'def'
 
 if __name__ == '__main__':
     webcam = cv2.VideoCapture()
-    webcam.open(0)
+    webcam.open(1)
 
     dummy, final_image = webcam.read()
     final_image = np.zeros( final_image.shape, dtype = np.float64)

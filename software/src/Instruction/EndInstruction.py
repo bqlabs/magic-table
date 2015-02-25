@@ -13,7 +13,7 @@ class EndInstruction(Instruction):
         self.code +="G28 X0     ;move X to min endstops\n"
         self.code +='M84                         ;steppers off\n'
         self.code +='G90                         ;absolute positioning\n'
-        self.code +='; -- end of END GCODE --\n+'
+        self.code +='; -- end of END GCODE --\n'
 
     def generate_code(self):
         return self.code
