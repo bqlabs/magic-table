@@ -10,7 +10,7 @@ def transform_image(src, new_width, new_height, new_depth):
         limits = np.concatenate((limits, np.array([255])))
     lut = np.zeros((256, 1))
     j = 0
-    print limits
+    #print limits
 
     for i in range(256):
         if i > limits[j]:

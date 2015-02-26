@@ -9,8 +9,8 @@ class RowIterator:
         self.current_row = -1
 
         self.image = image
-        self.cols = image.shape[0]
-        self.rows = image.shape[1]
+        self.cols = image.shape[1]
+        self.rows = image.shape[0]
 
     def __iter__(self):
         return self

@@ -3,6 +3,8 @@ from Instruction import Instruction
 __author__ = 'def'
 
 class EndInstruction(Instruction):
+    type = 'EndInstruction'
+
     def __init__(self):
         self.code = "; -- END GCODE --\n"
         self.code +="M42 P6 S0 ;turn off led\n"

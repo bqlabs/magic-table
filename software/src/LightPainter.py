@@ -1,8 +1,18 @@
+# Import instructions
 from Instruction.StartInstruction import StartInstruction
 from Instruction.TravelInstruction import TravelInstruction
+from Instruction.PaintInstruction import PaintInstruction
 from Instruction.EndInstruction import EndInstruction
 
+# Import iterators
+from ImageIterator.RowIterator import RowIterator
+
+# Import image transformations
+from transform_image import transform_image
+
+# Other imports
 import numpy as np
+import cv2
 
 __author__ = 'def'
 
@@ -20,7 +30,7 @@ class LightPainter:
         self.working_lower_right = (54.70, 91.90)
 
         # LED parameters:
-        self.max_led_value = 255 # From 0 to 255
+        self.max_led_value = 30 # From 0 to 255
         self.led_resolution = 1
 
         # LED stepping (resolution of the real grid in mm) [this uses the working area frame of reference]
@@ -73,7 +83,70 @@ class LightPainter:
 
         return [ (x, y), new_pixel]
 
+    def process_image_to_instructions(self, image):
+        """
+            Gets an image and processes it to generate the gcode
+        """
+        # Transform image to allowed dimensions
+        new_image = transform_image(image, self.src_img_width, self.src_img_height, 3)
+        cv2.imwrite('debug.png', new_image)
 
+        # Create iterator(s)
+        it_origin = RowIterator(new_image)
+        it_dest = RowIterator(new_image)
+        it_dest.next()
+
+        # Generate instructions
+        instructions = []
+        instructions.append(StartInstruction())
+
+        for (origin_point, origin_value), (dest_point, dest_value)  in zip(it_origin, it_dest):
+            # Coordinate transformation for the current points:
+            wa_origin_point, wa_origin_value = self.imageCoor2workingAreaCoor(origin_point, origin_value)
+            abs_origin_point, abs_origin_value = self.workingArea2CoreXYCoord(wa_origin_point, wa_origin_value)
+
+            wa_dest_point, wa_dest_value = self.imageCoor2workingAreaCoor(dest_point, dest_value)
+            abs_dest_point, abs_dest_value = self.workingArea2CoreXYCoord(wa_dest_point, wa_dest_value)
+
+            # Generate different instructions depending of color
+            if sum(abs_origin_value == 0) == abs_origin_value.size:
+                # Black pixel -> travel instruction
+                new_instruction = TravelInstruction(abs_origin_point, abs_dest_point)
+
+                # Try to accumulate travel instructions
+                try:
+                    if instructions[-1].type == 'TravelInstruction':
+                        instructions[-1].join(new_instruction)
+                except:
+                    instructions.append(new_instruction)
+
+            else:
+                new_instruction = PaintInstruction(abs_origin_point, abs_dest_point, abs_origin_value)
+                instructions.append(new_instruction)
+
+
+
+        instructions.append(EndInstruction())
+
+        return instructions
+
+
+    def process_image_to_gcode(self, image):
+        """
+            Gets an image and processes it to generate the gcode
+        """
+        # Generate instructions
+        instructions = self.process_image_to_instructions(image)
+
+        # Generate gcode
+        gcode = ''
+        for instruction in instructions:
+            gcode += instruction.generate_code()
+
+        return gcode
+
+
+# Test #1 : trajectory generation
 def x(t, r = 45):
     return  r * np.cos(t)
 
@@ -103,6 +176,7 @@ def test1():
     with open('test.gcode', 'w') as f:
         f.write(gcode)
 
+# Test #2: coordinate change test
 def test_coordinate_change():
     painter = LightPainter()
 
@@ -156,9 +230,23 @@ def test_coordinate_change():
     with open('test.gcode', 'w') as f:
         f.write(gcode)
 
+# Test #3: application test
+def test_image_processing():
+    # Load image to 'print'
+    image_to_load = 'Granger_Chart.jpg'
+    src = cv2.imread(image_to_load)
 
+    # Create LightPainter
+    painter = LightPainter()
+
+    # Process image
+    gcode = painter.process_image_to_gcode(src)
+
+    # Write gcode to disk
+    with open('test.gcode', 'w') as f:
+        f.write(gcode)
 
 if __name__ == '__main__':
     #test1()
-    test_coordinate_change()
-
+    #test_coordinate_change()
+    test_image_processing()
