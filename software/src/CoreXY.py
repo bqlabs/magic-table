@@ -26,6 +26,11 @@ class CoreXY:
         # Toolhead data
         self.led_pins = led_pins
 
+        # Buffer for incoming data
+        self.buffer = ''
+        self.initial_delay = 1 # seconds
+        self.timeout = 5 # seconds
+
 
     # Connection-related functions:
     def connect(self):
@@ -39,7 +44,21 @@ class CoreXY:
         # Open port
         self.serialPort.open()
 
-        return self.serialPort.isOpen()
+        if self.serialPort.isOpen():
+            # Reset connection:
+            self.reset()
+
+            # Read initial message
+            time.sleep(self.initial_delay)
+            self.readPort()
+            print '-------Initial message--------'
+            print self.buffer
+            print '------------------------------'
+            while self.getLastLine():
+                pass
+            return True
+        else:
+            return False
 
     def disconnect(self):
         self.serialPort.close()
@@ -50,48 +69,79 @@ class CoreXY:
         time.sleep(0.2)
         self.serialPort.setDTR(0)
 
-
     def readPort(self):
         """
             Reads a string from the serial port
         """
-        string = ''
         while self.serialPort.inWaiting() > 0:
-            string += self.serialPort.read(1)
-        return string
+            self.buffer += self.serialPort.read(1)
+
+    def getLastLine(self):
+        """
+            Reads a line from the buffer (and removes it from the buffer)
+        """
+        newline_pos = self.buffer.find('\n')
+        if newline_pos != 1:
+            line = self.buffer[:newline_pos]
+            self.buffer = self.buffer[newline_pos+1:]
+            return line
+        else:
+            return None
+
+    def getPosFromBuffer(self):
+        str = self.getLastLine()
+        tokens = str.split(' ')
+
+        print tokens[0][3:], tokens[1][3:]
+        xpos = float(tokens[0][3:])
+        ypos = float(tokens[1][3:])
+
+        return (xpos, ypos)
 
     # Movement-related functions:
     def homing(self):
+        n_lines = self.homing_gcode.count('\n')
         self.serialPort.write(self.homing_gcode)
-        #print "[+] Got: " + self.readPort()
-        self.waitOk()
+        time.sleep(2)
+        self.waitOk(n_lines)
 
 
     def moveAbs(self, point, speed=100):
         self.serialPort.write(self.move_gcode % (speed*60, point[0], point[1]))
+        time.sleep(0.2)
         self.waitOk()
 
-        # print "[+] Got: " + self.readPort()
+
 
     def currentPos(self):
         self.serialPort.write("M114\n")
         time.sleep(0.2)
 
-        read = ''
-        while read == '' or read == ' ':
-            read = self.readPort()
-            print read
+        self.readPort()
+        print "Got: " + self.buffer
+        return self.getPosFromBuffer()
 
+    def waitOk(self, times = 1):
+        # read = ''
+        # while read == '' or read == ' ' or read != "ok\n":
+        #     read = self.readPort()
+        #     if read == "ok\n":
+        #         print "Done!"
+        self.readPort()
 
-        print "Got: " + read
+        for i in range(times):
+            read = None
+            init_time = time.time()
+            while not read:
+                if time.time() - init_time > self.timeout:
+                    raise Exception('Timeout while waiting for ok #%d' % i)
+                read = self.getLastLine()
 
+            if read != 'ok\n':
+                return False
 
-    def waitOk(self):
-        read = ''
-        while read == '' or read == ' ' or read != "ok\n":
-            read = self.readPort()
-            if read == "ok\n":
-                print "Done!"
+        return True
+
 
     # Led-related functions:
     def setLed(self, px):
@@ -125,8 +175,8 @@ if __name__ == "__main__":
         print "[+] Connected to CoreXY"
 
     # Homing
-    time.sleep(5)
-    print "[+] Received: " + coreXY.readPort()
+    # time.sleep(5)
+    # print "[+] Received: " + coreXY.readPort()
     coreXY.homing()
     time.sleep(5)
 
