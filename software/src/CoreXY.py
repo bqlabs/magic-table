@@ -114,11 +114,9 @@ class CoreXY:
         tokens = string.split(' ')
 
         try:
-            print tokens[0][3:], tokens[1][3:]
-
+            #print tokens[0][3:], tokens[1][3:]
             xpos = float(tokens[0][3:])
             ypos = float(tokens[1][3:])
-
             return (xpos, ypos)
 
         except IndexError, e:
@@ -159,7 +157,7 @@ class CoreXY:
         distance = np.linalg.norm(np.array(point) - np.array(origin))
         required_time = np.true_divide(distance, speed)
         print "realTimeMoveAbs> Required sleep: " + str(required_time) + ' seconds'
-        
+
         # Send command and wait required time
         self.moveAbs(point, speed)
         time.sleep(required_time)
