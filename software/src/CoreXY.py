@@ -1,5 +1,6 @@
 import serial
 import time
+import numpy as np
 
 __author__ = 'def'
 
@@ -150,6 +151,19 @@ class CoreXY:
         self.serialPort.write(self.move_gcode % (speed*60, point[0], point[1]))
         self.waitOk()
 
+    def realTimeMoveAbs(self, point, speed=100):
+        # Get current position
+        origin = self.currentPos()
+
+        # Calculate required time for the movement:
+        distance = np.linalg.norm(np.array(point) - np.array(origin))
+        required_time = np.true_divide(distance, speed)
+        print "realTimeMoveAbs> Required sleep: " + str(required_time) + ' seconds'
+        
+        # Send command and wait required time
+        self.moveAbs(point, speed)
+        time.sleep(required_time)
+
     def currentPos(self):
         self.serialPort.write("M114\n")
         time.sleep(1)
@@ -196,10 +210,11 @@ if __name__ == "__main__":
         coreXY.homing()
         time.sleep(5)
 
-        coreXY.moveAbs((210, 310), 200)
-        time.sleep(5)
+        coreXY.realTimeMoveAbs((210, 310), 200)
+        coreXY.setLed((0, 255, 255))
+        #time.sleep(5)
 
-        coreXY.moveAbs((210/2, 310/2), 200)
+        coreXY.realTimeMoveAbs((210/2, 310/2), 200)
         coreXY.setLed((255, 0, 255))
         coreXY.currentPos()
         time.sleep(5)
