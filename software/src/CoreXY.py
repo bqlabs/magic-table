@@ -28,7 +28,7 @@ class CoreXY:
 
         # Buffer for incoming data
         self.buffer = ''
-        self.initial_delay = 1 # seconds
+        self.initial_delay = 5 # seconds
         self.timeout = 5 # seconds
 
 
@@ -50,12 +50,15 @@ class CoreXY:
 
             # Read initial message
             time.sleep(self.initial_delay)
-            self.readPort()
+            self.readPortWithTimeout()
             print '-------Initial message--------'
-            print self.buffer
+            while True:
+                line = self.getLastLine()
+                if line:
+                    print line
+                else:
+                    break
             print '------------------------------'
-            while self.getLastLine():
-                pass
             return True
         else:
             return False
@@ -76,6 +79,16 @@ class CoreXY:
         while self.serialPort.inWaiting() > 0:
             self.buffer += self.serialPort.read(1)
 
+    def readPortWithTimeout(self):
+        # Read data from port to buffer:
+        init_time = time.time()
+        self.readPort()
+        while not self.buffer:
+            if time.time() - init_time > self.timeout:
+                raise Exception('Timeout while waiting for data')
+            self.readPort()
+        #print "readPortWithTimeout> Buffer contents: " + self.buffer
+
     def getLastLine(self):
         """
             Reads a line from the buffer (and removes it from the buffer)
@@ -89,58 +102,61 @@ class CoreXY:
             return None
 
     def getPosFromBuffer(self):
-        str = self.getLastLine()
-        tokens = str.split(' ')
+        string = 'ok'
+        #while string == 'ok\n':
+        while string == "ok":
+            #print "String>\"" + string + "\""
+            string = self.getLastLine()
+            if not string:
+                raise Exception("Buffer is empty")
 
-        print tokens[0][3:], tokens[1][3:]
-        xpos = float(tokens[0][3:])
-        ypos = float(tokens[1][3:])
+        tokens = string.split(' ')
 
-        return (xpos, ypos)
+        try:
+            print tokens[0][3:], tokens[1][3:]
+
+            xpos = float(tokens[0][3:])
+            ypos = float(tokens[1][3:])
+
+            return (xpos, ypos)
+
+        except IndexError, e:
+            print "IndexError: " + e.message
+            print "When processing this: " + str(tokens)
+            return None
+
+    def waitOk(self, times = 1):
+        # Read data from port
+        self.readPortWithTimeout()
+
+        # Check buffer contents:
+        ok = True
+        for i in range(times):
+            read = self.getLastLine()
+
+            if read != 'ok\n':
+                ok = False
+
+        return ok
+
 
     # Movement-related functions:
     def homing(self):
         n_lines = self.homing_gcode.count('\n')
         self.serialPort.write(self.homing_gcode)
-        time.sleep(2)
         self.waitOk(n_lines)
-
 
     def moveAbs(self, point, speed=100):
         self.serialPort.write(self.move_gcode % (speed*60, point[0], point[1]))
-        time.sleep(0.2)
         self.waitOk()
-
-
 
     def currentPos(self):
         self.serialPort.write("M114\n")
-        time.sleep(0.2)
+        time.sleep(1)
 
-        self.readPort()
-        print "Got: " + self.buffer
+        self.readPortWithTimeout()
+        #print "CurrentPos> Buffer contents: " + self.buffer
         return self.getPosFromBuffer()
-
-    def waitOk(self, times = 1):
-        # read = ''
-        # while read == '' or read == ' ' or read != "ok\n":
-        #     read = self.readPort()
-        #     if read == "ok\n":
-        #         print "Done!"
-        self.readPort()
-
-        for i in range(times):
-            read = None
-            init_time = time.time()
-            while not read:
-                if time.time() - init_time > self.timeout:
-                    raise Exception('Timeout while waiting for ok #%d' % i)
-                read = self.getLastLine()
-
-            if read != 'ok\n':
-                return False
-
-        return True
 
 
     # Led-related functions:
@@ -161,7 +177,6 @@ class CoreXY:
         self.waitOk()
 
 
-
 if __name__ == "__main__":
 
     # Create CoreXY
@@ -177,16 +192,24 @@ if __name__ == "__main__":
     # Homing
     # time.sleep(5)
     # print "[+] Received: " + coreXY.readPort()
-    coreXY.homing()
-    time.sleep(5)
+    try:
+        coreXY.homing()
+        time.sleep(5)
 
-    coreXY.moveAbs((210, 310), 200)
-    time.sleep(5)
+        coreXY.moveAbs((210, 310), 200)
+        time.sleep(5)
 
-    coreXY.moveAbs((210/2, 310/2), 200)
-    coreXY.setLed((255, 0, 255))
-    coreXY.currentPos()
-    time.sleep(5)
+        coreXY.moveAbs((210/2, 310/2), 200)
+        coreXY.setLed((255, 0, 255))
+        coreXY.currentPos()
+        time.sleep(5)
 
-    coreXY.ledOff()
-    coreXY.disconnect()
+        coreXY.ledOff()
+
+    except Exception, e:
+        print "Error occured! : " + e.message
+        print "Dumping buffer: " + coreXY.buffer
+
+    finally:
+        coreXY.disconnect()
+
