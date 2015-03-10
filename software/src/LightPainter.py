@@ -60,8 +60,6 @@ class LightPainter:
         self.src_img_height = int(self.working_width / self.x_step_resolution)
         self.src_img_width = int(self.working_length / self.y_step_resolution)
 
-
-
     # Functions related to changing the frame of reference of points
     def workingArea2CoreXYCoord(self, working_area_point, working_area_led_value = 0):
         """
@@ -83,6 +81,7 @@ class LightPainter:
 
         return [ (x, y), new_pixel]
 
+    # Processing a image to get the gcode
     def process_image_to_instructions(self, image):
         """
             Gets an image and processes it to generate the gcode

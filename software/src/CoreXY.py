@@ -32,7 +32,6 @@ class CoreXY:
         self.initial_delay = 5 # seconds
         self.timeout = 5 # seconds
 
-
     # Connection-related functions:
     def connect(self):
         # Create serial port
@@ -73,6 +72,8 @@ class CoreXY:
         time.sleep(0.2)
         self.serialPort.setDTR(0)
 
+
+    # Communications with CoreXY board
     def readPort(self):
         """
             Reads a string from the serial port
@@ -160,7 +161,7 @@ class CoreXY:
 
         # Send command and wait required time
         self.moveAbs(point, speed)
-        time.sleep(required_time)
+        time.sleep(required_time*1.7)
 
     def currentPos(self):
         self.serialPort.write("M114\n")
@@ -204,20 +205,25 @@ if __name__ == "__main__":
     # Homing
     # time.sleep(5)
     # print "[+] Received: " + coreXY.readPort()
+    points = [ (59, 208), (59, 94), (142, 94), (142, 211)]
     try:
         coreXY.homing()
         time.sleep(5)
 
-        coreXY.realTimeMoveAbs((210, 310), 200)
+        coreXY.realTimeMoveAbs(points[0], 200)
         coreXY.setLed((0, 255, 255))
         #time.sleep(5)
 
-        coreXY.realTimeMoveAbs((210/2, 310/2), 200)
-        coreXY.setLed((255, 0, 255))
-        coreXY.currentPos()
-        time.sleep(5)
-
+        coreXY.realTimeMoveAbs(points[2], 200)
         coreXY.ledOff()
+
+        coreXY.realTimeMoveAbs(points[1], 200)
+        coreXY.setLed((255, 0, 255))
+
+        coreXY.realTimeMoveAbs(points[3], 200)
+        coreXY.ledOff()
+
+        coreXY.homing()
 
     except Exception, e:
         print "Error occured! : " + e.message
