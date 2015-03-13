@@ -103,11 +103,7 @@ void loop()
   }
   else if (state == MODE_1)
   {
-    //-- Things to do here
-    digitalWrite(userLedPins[0], LOW);
-    digitalWrite(userLedPins[1], HIGH);
-    digitalWrite(userLedPins[2], LOW);
-    digitalWrite(userLedPins[3], LOW);
+      mode1();
   }
   else if (state == MODE_2)
   {
@@ -135,6 +131,49 @@ void loop()
     }
 }
 
+void mode1()
+{
+    //-- Mode 1: position control
+    //----------------------------------
+    digitalWrite(userLedPins[0], LOW);
+    digitalWrite(userLedPins[1], HIGH);
+    digitalWrite(userLedPins[2], LOW);
+    digitalWrite(userLedPins[3], LOW);
+    
+    //-- Read encoders
+    long newLeft, newRight;
+    newLeft = knobLeft.read();
+    newRight = knobRight.read();
+    
+    //-- Do things if encoders where moved
+  
+    if (newLeft > positionLeft)
+    {
+      //-- Left turned right
+      Mouse.move(5, 0, 0);  
+    }
+    else if (newLeft < positionLeft)
+    {
+      //-- Left turned left
+      Mouse.move(-5, 0, 0);  
+    }
+      
+    if (newRight > positionRight)
+    {
+      //-- Right turned right
+      Mouse.move(0, 5, 0);        
+    }
+    else if (newRight < 0)
+    {
+      //-- Right turned left
+      Mouse.move(0, -5, 0);       
+    }
+    
+    //-- Update encoder counters
+    positionLeft = newLeft;
+    positionRight = newRight;
+    delay(50);      
+}
 void mode2()
 {
     //-- Mode 2: arrow control
@@ -181,7 +220,7 @@ void mode2()
     }
     else if (newRight < positionRight)
     {
-      //-- Left turned left
+      //-- Right turned left
       Keyboard.press(KEY_DOWN_ARROW);
       digitalWrite(boardLedPin, HIGH);
       delay(100);
