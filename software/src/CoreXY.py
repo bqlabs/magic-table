@@ -82,6 +82,10 @@ class CoreXY:
             self.buffer += self.serialPort.read(1)
 
     def readPortWithTimeout(self):
+        """
+            Reads a string from the serial port, waiting for incoming data
+            during self.timeout seconds
+        """
         # Read data from port to buffer:
         init_time = time.time()
         self.readPort()
@@ -96,7 +100,7 @@ class CoreXY:
             Reads a line from the buffer (and removes it from the buffer)
         """
         newline_pos = self.buffer.find('\n')
-        if newline_pos != 1:
+        if newline_pos != -1:
             line = self.buffer[:newline_pos]
             self.buffer = self.buffer[newline_pos+1:]
             return line
