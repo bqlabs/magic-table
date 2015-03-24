@@ -145,6 +145,23 @@ class CoreXY:
 
 
     # Movement-related functions:
+    def sendRawCommand(self, raw_command):
+        # Remove comments:
+        comment_begin = raw_command.find(';')
+        if comment_begin != -1:
+            raw_command=raw_command[:comment_begin]
+
+        if raw_command:
+            print '[Debug] Sending: ' + raw_command
+            self.serialPort.write(raw_command)
+
+            try:
+                self.readPort()
+            except Exception, e:
+                print '[Debug] Timeout!'
+        else:
+            print '[Debug] Comment!'
+
     def homing(self):
         n_lines = self.homing_gcode.count('\n')
         self.serialPort.write(self.homing_gcode)
