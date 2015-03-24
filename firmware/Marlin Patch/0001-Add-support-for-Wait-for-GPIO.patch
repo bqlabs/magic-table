@@ -1,0 +1,52 @@
+From 01778de8d956eb65b472164ce01105d5fa582c39 Mon Sep 17 00:00:00 2001
+From: David-Estevez <david.estevez@bq.com>
+Date: Tue, 24 Mar 2015 11:19:33 +0100
+Subject: [PATCH] Add support for "Wait for GPIO"
+
+Wait for GPIO makes the printer wait until all queued movements
+have been performed before changing the status of a GPIO pin.
+
+This allows precise control of the X,Y,Z position of the toolhead
+when it is activated.
+---
+ Marlin/Configuration.h | 9 +++++++--
+ Marlin/Marlin_main.cpp | 3 +++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/Marlin/Configuration.h b/Marlin/Configuration.h
+index f5a36e6..c846539 100644
+--- a/Marlin/Configuration.h
++++ b/Marlin/Configuration.h
+@@ -722,8 +722,13 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
+ //#define FILAMENT_LCD_DISPLAY
+ 
+ 
+-
+-
++/*********************************************************************\
++* 'Wait for GPIO' support
++* Sponsored by BQ
++**********************************************************************/
++// If this option is enabled, the printer will wait until all the queued
++// movements have been performed before changing the state of a GPIO
++//#define WAIT_FOR_GPIO
+ 
+ 
+ #include "Configuration_adv.h"
+diff --git a/Marlin/Marlin_main.cpp b/Marlin/Marlin_main.cpp
+index 5109118..fcf7511 100644
+--- a/Marlin/Marlin_main.cpp
++++ b/Marlin/Marlin_main.cpp
+@@ -2721,6 +2721,9 @@ inline void gcode_M42() {
+     #endif
+ 
+     if (pin_number > -1) {
++      #if defined(WAIT_FOR_GPIO)
++        st_synchronize();
++      #endif
+       pinMode(pin_number, OUTPUT);
+       digitalWrite(pin_number, pin_status);
+       analogWrite(pin_number, pin_status);
+-- 
+1.9.1
+
