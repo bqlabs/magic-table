@@ -194,8 +194,8 @@ class CoreXY:
         self.waitOk()
 
 
-if __name__ == "__main__":
 
+def test1():
     # Create CoreXY
     coreXY = CoreXY()
 
@@ -236,3 +236,32 @@ if __name__ == "__main__":
     finally:
         coreXY.disconnect()
 
+def test2():
+    filename = 'test.gcode'
+    coreXY = CoreXY()
+
+    # Connect to CoreXY
+    if not coreXY.connect():
+        print "[-] Could not connect to CoreXY"
+        exit(1)
+    else:
+        print "[+] Connected to CoreXY"
+
+    with open(filename, 'r') as f:
+        contents = f.readlines()
+
+    try:
+        for line in contents:
+            coreXY.sendRawCommand(line)
+            time.sleep(0.2)
+
+    except Exception, e:
+        print "Error occured! : " + e.message
+        print "Dumping buffer: " + coreXY.buffer
+
+    finally:
+        coreXY.disconnect()
+
+if __name__ == "__main__":
+    #test1()
+    test2()
