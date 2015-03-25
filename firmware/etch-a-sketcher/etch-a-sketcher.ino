@@ -150,12 +150,12 @@ void mode1()
     if (newLeft > positionLeft)
     {
       //-- Left turned right
-      Mouse.move(5, 0, 0);  
+      Mouse.move(-5, 0, 0);  
     }
     else if (newLeft < positionLeft)
     {
       //-- Left turned left
-      Mouse.move(-5, 0, 0);  
+      Mouse.move(5, 0, 0);  
     }
       
     if (newRight > positionRight)
@@ -163,7 +163,7 @@ void mode1()
       //-- Right turned right
       Mouse.move(0, 5, 0);        
     }
-    else if (newRight < 0)
+    else if (newRight < positionRight)
     {
       //-- Right turned left
       Mouse.move(0, -5, 0);       
