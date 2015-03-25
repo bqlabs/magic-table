@@ -232,7 +232,8 @@ def test_coordinate_change():
 # Test #3: application test
 def test_image_processing():
     # Load image to 'print'
-    image_to_load = 'Granger_Chart.jpg'
+    #image_to_load = 'Granger_Chart.jpg'
+    image_to_load = 'pattern4.png'
     src = cv2.imread(image_to_load)
 
     # Create LightPainter
