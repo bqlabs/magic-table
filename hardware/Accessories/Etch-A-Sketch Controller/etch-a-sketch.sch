@@ -30,13 +30,14 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:kicad-library
+LIBS:etch-a-sketch-cache
 EELAYER 27 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Etch-a-Sketch"
-Date "25 mar 2015"
+Date "26 mar 2015"
 Rev "1.0"
 Comp "BQ"
 Comment1 "David Estévez"

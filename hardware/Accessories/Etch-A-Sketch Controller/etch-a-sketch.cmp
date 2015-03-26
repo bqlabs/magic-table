@@ -1,0 +1,192 @@
+Cmp-Mod V01 Created by CvPcb (2013-jul-07)-stable date = jue 26 mar 2015 12:38:25 CET
+
+BeginCmp
+TimeStamp = /5512B2E9;
+Reference = BOARD1;
+ValeurCmp = BOARD_TEENSY_3.1;
+IdModule  = Board_Teensy_3_1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B417;
+Reference = C1;
+ValeurCmp = C;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B343;
+Reference = C2;
+ValeurCmp = C;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B641;
+Reference = C3;
+ValeurCmp = C;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B61B;
+Reference = C4;
+ValeurCmp = C;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B876;
+Reference = D1;
+ValeurCmp = GREEN;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B8C7;
+Reference = D2;
+ValeurCmp = RED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B8D4;
+Reference = D3;
+ValeurCmp = GREEN;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B8E1;
+Reference = D4;
+ValeurCmp = RED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B2F8;
+Reference = EN1;
+ValeurCmp = MISC_ENCODER_5_PINS;
+IdModule  = MISC_ENCODER_5_PINS;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B615;
+Reference = EN2;
+ValeurCmp = MISC_ENCODER_5_PINS;
+IdModule  = MISC_ENCODER_5_PINS;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B423;
+Reference = R1;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B35F;
+Reference = R2;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B41D;
+Reference = R3;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B352;
+Reference = R4;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B64D;
+Reference = R5;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B627;
+Reference = R6;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B647;
+Reference = R7;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B621;
+Reference = R8;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B885;
+Reference = R9;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B8CD;
+Reference = R10;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B8DA;
+Reference = R11;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512B8E7;
+Reference = R12;
+ValeurCmp = R;
+IdModule  = R5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512C025;
+Reference = SW1;
+ValeurCmp = DPST;
+IdModule  = Switches-Push_switch_THD;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512C032;
+Reference = SW2;
+ValeurCmp = DPST;
+IdModule  = Switches-Push_switch_THD;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512C038;
+Reference = SW3;
+ValeurCmp = DPST;
+IdModule  = Switches-Push_switch_THD;
+EndCmp
+
+BeginCmp
+TimeStamp = /5512C03E;
+Reference = SW4;
+ValeurCmp = DPST;
+IdModule  = Switches-Push_switch_THD;
+EndCmp
+
+EndListe
