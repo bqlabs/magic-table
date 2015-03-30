@@ -27,8 +27,8 @@ class LightPainter:
 
         # Working area (webcam field of view)
         # note: working_length and width need to be recalculated if they are to be configured externally
-        self.working_upper_left = (144.30, 216.90)
-        self.working_lower_right = (54.70, 91.90)
+        self.working_upper_left = (54.70, 216.90)
+        self.working_lower_right = (144.30, 91.90)
 
         # LED parameters:
         self.max_led_value = 30 # From 0 to 255
@@ -66,7 +66,7 @@ class LightPainter:
         """
             Changes coordinates from working area to CoreXY frame of reference
         """
-        x = working_area_point[0] + self.working_lower_right[0]
+        x = working_area_point[0] + self.working_upper_left[0]
         y = working_area_point[1] + self.working_lower_right[1]
         led_value = working_area_led_value
 
@@ -76,7 +76,7 @@ class LightPainter:
         """
             Changes coordinates from working area to CoreXY frame of reference
         """
-        x = image_point[1] * self.x_step_resolution
+        x = self.working_width - image_point[1] * self.x_step_resolution
         y = self.working_length - image_point[0] * self.y_step_resolution
         new_pixel = np.floor( np.true_divide(pixel * np.true_divide(self.max_led_value, 255), self.led_resolution)) * self.led_resolution
 
@@ -182,16 +182,16 @@ def test_coordinate_change():
 
     # Testing coordinate change:
     print "Checking coordinate change..."
-    # Image point: (0, 0) -> Working area: (0, painter.working_length) -> Absolute frame: (painter.working_lower_right[0], painter.working_upper_left[1])
+    # Image point: (0, 0) -> Working area: (painter.working_width, painter.working_length) -> Absolute frame: (painter.working_lower_right[0], painter.working_upper_left[1])
     wa_point = painter.imageCoor2workingAreaCoor([0,0])[0]
-    abs_point = painter.workingArea2CoreXYCoord([0, painter.working_length])[0]
+    abs_point = painter.workingArea2CoreXYCoord([painter.working_width, painter.working_length])[0]
 
-    if wa_point[0] == 0 and wa_point[1] == painter.working_length:
+    if wa_point[0] == painter.working_width and wa_point[1] == painter.working_length:
         print "\tImage coordinate to working area convert is ok"
     else:
-        print "\tError in image coordinate to working area convert (%f, %f) != (0, %f)" % (wa_point[0], wa_point[1], painter.working_length)
+        print "\tError in image coordinate to working area convert (%f, %f) != (%f, %f)" % (wa_point[0], wa_point[1], painter.working_width, painter.working_length)
 
-    if abs_point[0] == 53 and abs_point[1] == 216:
+    if abs_point[0] == painter.working_lower_right[0] and abs_point[1] == painter.working_upper_left[1]:
         print "\tWorking area to abs frame convert is ok"
     else:
         print "\tError in working area to abs frame convert (%f, %f) != (%f, %f)" % (abs_point[0], abs_point[1], painter.working_lower_right[0], painter.working_upper_left[1])
