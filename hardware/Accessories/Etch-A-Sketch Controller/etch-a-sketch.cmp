@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-jul-07)-stable date = jue 26 mar 2015 12:38:25 CET
+Cmp-Mod V01 Created by CvPcb (2013-jul-07)-stable date = lun 30 mar 2015 12:37:57 CEST
 
 BeginCmp
 TimeStamp = /5512B2E9;
@@ -64,17 +64,17 @@ IdModule  = LED-5MM;
 EndCmp
 
 BeginCmp
-TimeStamp = /5512B2F8;
+TimeStamp = /55192834;
 Reference = EN1;
-ValeurCmp = MISC_ENCODER_5_PINS;
-IdModule  = MISC_ENCODER_5_PINS;
+ValeurCmp = ENCODER_5_PINS;
+IdModule  = Misc_Encoder_5_Pins_w_shield;
 EndCmp
 
 BeginCmp
-TimeStamp = /5512B615;
+TimeStamp = /551928D0;
 Reference = EN2;
-ValeurCmp = MISC_ENCODER_5_PINS;
-IdModule  = MISC_ENCODER_5_PINS;
+ValeurCmp = ENCODER_5_PINS;
+IdModule  = Misc_Encoder_5_Pins_w_shield;
 EndCmp
 
 BeginCmp
