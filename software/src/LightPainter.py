@@ -8,11 +8,12 @@ from Instruction.EndInstruction import EndInstruction
 from ImageIterator.RowIterator import RowIterator
 
 # Import image transformations
-from transform_image import transform_image
+from Utils.transform_image import transform_image
 
 # Other imports
 import numpy as np
 import cv2
+import optparse
 
 __author__ = 'def'
 
@@ -152,7 +153,7 @@ def x(t, r = 45):
 def y(t, r = 45):
     return  r * np.sin(t)
 
-def test1():
+def test1(output_file):
         # Generate points of circle:
     t_array = np.arange(0, 10*np.pi, 0.1)
     points = [ ( x(t)+100, y(t)+150) for t in t_array ]
@@ -172,7 +173,7 @@ def test1():
     for instruction in instructions:
         gcode += instruction.generate_code()
 
-    with open('test.gcode', 'w') as f:
+    with open(output_file, 'w') as f:
         f.write(gcode)
 
 # Test #2: coordinate change test
@@ -230,11 +231,12 @@ def test_coordinate_change():
         f.write(gcode)
 
 # Test #3: application test
-def test_image_processing():
+def test_image_processing(image_to_load, output_file):
     # Load image to 'print'
-    #image_to_load = 'Granger_Chart.jpg'
-    image_to_load = 'pattern4.png'
     src = cv2.imread(image_to_load)
+    if src == None:
+        print "Image could not be loaded!"
+        exit(1)
 
     # Create LightPainter
     painter = LightPainter()
@@ -243,10 +245,29 @@ def test_image_processing():
     gcode = painter.process_image_to_gcode(src)
 
     # Write gcode to disk
-    with open('test.gcode', 'w') as f:
+    with open(output_file, 'w') as f:
         f.write(gcode)
 
 if __name__ == '__main__':
-    #test1()
-    #test_coordinate_change()
-    test_image_processing()
+    image_to_load = 'pattern4.png'
+
+    # Parse command-line parameters
+    parser = optparse.OptionParser("usage: %prog [options]")
+    parser.add_option("-t", "--test", dest="test_num", default=-1, type="int",help="Used if you want to select a test")
+    parser.add_option("-o", "--output", dest="output_file", default="test.gcode", type="string",help="Output file in which the result will be saved")
+    parser.add_option("-i", "--input", dest="input_file", default="Granger_Chart.jpg", type="string",help="Input image")
+    (options, args) = parser.parse_args()
+    test_num = options.test_num
+    output_file = options.output_file
+    input_file = options.input_file
+
+    if test_num == -1:
+        print "No test was selected!"
+    elif test_num == 0:
+        test1(output_file)
+    elif test_num ==1:
+        test_coordinate_change()
+    elif test_num == 2:
+        test_image_processing(input_file, output_file)
+    else:
+        print "Test selected does not exist"
