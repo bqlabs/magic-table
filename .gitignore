@@ -2,3 +2,4 @@
 .idea
 *.bak
 *CMakeLists.txt.user
+*.fcstd1
