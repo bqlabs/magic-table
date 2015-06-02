@@ -1,3 +1,4 @@
 *.pyc
 .idea
 *.bak
+*CMakeLists.txt.user
