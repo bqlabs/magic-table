@@ -95,11 +95,7 @@ void loop()
   //-- Things to be done on each state:
   if (state == MODE_0)
   {
-    //-- Things to do here
-    digitalWrite(userLedPins[0], HIGH);
-    digitalWrite(userLedPins[1], LOW);
-    digitalWrite(userLedPins[2], LOW);
-    digitalWrite(userLedPins[3], LOW);
+    mode0();
   }
   else if (state == MODE_1)
   {
@@ -131,6 +127,60 @@ void loop()
     }
 }
 
+void mode0()
+{
+    //-- Mode 0: scroll + TAB
+    //----------------------------------
+    digitalWrite(userLedPins[0], HIGH);
+    digitalWrite(userLedPins[1], LOW);
+    digitalWrite(userLedPins[2], LOW);
+    digitalWrite(userLedPins[3], LOW);
+
+    //-- Read encoders
+    long newLeft, newRight;
+    newLeft = knobLeft.read();
+    newRight = knobRight.read();
+    
+    //-- Do things if encoders where moved
+  
+    if (newLeft > positionLeft)
+    {
+      //-- Left turned right
+      Mouse.move(0, 0, 5);  
+    }
+    else if (newLeft < positionLeft)
+    {
+      //-- Left turned left
+      Mouse.move(0, 0, -5);  
+    }
+    
+    if (newRight > positionRight)
+    {
+      //-- Right turned right
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.press(KEY_TAB);
+      digitalWrite(boardLedPin, HIGH);
+      delay(100);
+      Keyboard.release(KEY_TAB);
+      Keyboard.release(KEY_LEFT_SHIFT);
+      digitalWrite(boardLedPin, LOW);      
+    }
+    else if (newRight < positionRight)
+    {
+      //-- Right turned left
+      Keyboard.press(KEY_TAB);
+      digitalWrite(boardLedPin, HIGH);
+      delay(100);
+      Keyboard.release(KEY_TAB);
+      digitalWrite(boardLedPin, LOW);     
+    }
+
+    //-- Update encoder counters
+    positionLeft = newLeft;
+    positionRight = newRight;
+    delay(50);          
+    
+}
 void mode1()
 {
     //-- Mode 1: position control
@@ -168,6 +218,7 @@ void mode1()
       //-- Right turned left
       Mouse.move(0, -5, 0);       
     }
+    
     
     //-- Update encoder counters
     positionLeft = newLeft;
