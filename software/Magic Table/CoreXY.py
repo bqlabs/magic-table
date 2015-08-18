@@ -23,6 +23,7 @@ class CoreXY:
         self.x = None
         self.y = None
 
+        self.toolhead = None
 
     # Basic functionality (provided by the communications interface)
     def connect(self):
@@ -74,6 +75,11 @@ class CoreXY:
 
         self.comm.send("G1 F6000 X%s Y%s\n" % (new_x, new_y))
         self.x, self.y = new_x, new_y
+
+    # Toolhead functions
+    def set_toolhead(self, toolhead):
+        self.toolhead = toolhead
+        self.toolhead._set_comm_interface(self.comm)
 
 
 if __name__ == '__main__':
