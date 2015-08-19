@@ -1,4 +1,6 @@
-import sys, time
+import os, sys
+import glob
+import time
 
 pronterface_path = '/home/def/Repositories/Printrun'
 sys.path.append(pronterface_path)
@@ -6,6 +8,7 @@ sys.path.append(pronterface_path)
 from printrun.printcore import printcore
 
 __author__ = 'def'
+
 
 class CoreXY:
     """ Basic class to control a CoreXY with Marlin Firmware """
@@ -46,6 +49,22 @@ class CoreXY:
 
     def reset(self):
         self.comm.reset()
+
+    # Communications helper functions
+    @staticmethod
+    def get_available_ports():
+        """scan for available ports. return a list of device names."""
+        ports = []
+        names = ['/dev/ttyUSB*', '/dev/ttyACM*', "/dev/tty.*", "/dev/cu.*", "/dev/rfcomm*"]
+
+        for name in names:
+            ports += glob.glob(name)
+
+        return ports
+
+    @staticmethod
+    def get_available_baudrates():
+        return ["2400", "9600", "19200", "38400", "57600", "115200", "250000"]
 
     # Movement
     def home(self):

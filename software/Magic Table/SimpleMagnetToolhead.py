@@ -6,6 +6,7 @@ __author__ = 'def'
 class SimpleMagnetToolhead:
     def __init__(self, *args):
         self.comm = None
+        self.type = 'SimpleMagnet'
         self.magnets = []
 
         for arg in args:
