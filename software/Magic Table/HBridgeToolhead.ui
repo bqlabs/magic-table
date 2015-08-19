@@ -35,7 +35,7 @@
     </size>
    </property>
    <property name="title">
-    <string>Tool1</string>
+    <string>Magnet</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
