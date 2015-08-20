@@ -116,7 +116,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icons/home.png</normaloff>icons/home.png</iconset>
+              <normaloff>resources/icons/home.svg</normaloff>resources/icons/home.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -133,7 +133,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icons/arrow_up.png</normaloff>icons/arrow_up.png</iconset>
+              <normaloff>resources/icons/up_arrow.svg</normaloff>resources/icons/up_arrow.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -150,7 +150,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icons/arrow_down.png</normaloff>icons/arrow_down.png</iconset>
+              <normaloff>resources/icons/down_arrow.svg</normaloff>resources/icons/down_arrow.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -167,7 +167,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icons/arrow_right.png</normaloff>icons/arrow_right.png</iconset>
+              <normaloff>resources/icons/right_arrow.svg</normaloff>resources/icons/right_arrow.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -184,7 +184,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icons/arrow_left.png</normaloff>icons/arrow_left.png</iconset>
+              <normaloff>resources/icons/left_arrow.svg</normaloff>resources/icons/left_arrow.svg</iconset>
             </property>
             <property name="iconSize">
              <size>

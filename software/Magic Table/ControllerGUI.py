@@ -5,20 +5,24 @@ import sys, os
 __author__ = 'def'
 
 
-class ControllerGUI:
+class ControllerGUI(QtGui.QWidget):
 
     defaultBaudrate = '115200'
 
-    def __init__(self, machine):
+    def __init__(self, parent, machine):
+        QtGui.QWidget.__init__(self, parent)
+
         self.machine = machine
         self.currentPort = None
         self.currentBaudrate = self.defaultBaudrate
+        self.form = None
 
         self.loadUI()
 
     def loadUI(self):
         # Load UI
-        self.form = load_ui(os.path.join(os.path.realpath(os.path.dirname(__file__)), 'ControllerGUI.ui'))
+        load_ui(os.path.join(os.path.realpath(os.path.dirname(__file__)), 'ControllerGUI.ui'), self)
+        self.form = self.findChild(QtGui.QWidget)
 
         # Connect things to UI slots to enable functionality
         self.set_available_ports()
@@ -35,12 +39,12 @@ class ControllerGUI:
         self.form.downButton.clicked.connect(self.onMoveDownButton)
         self.form.leftButton.clicked.connect(self.onMoveLeftButton)
         self.form.rightButton.clicked.connect(self.onMoveRightButton)
+        self.form.keyboardCheckBox.stateChanged.connect(self.setFocus)
 
     def set_available_ports(self):
         self.form.portComboBox.clear()
         ports = CoreXY.get_available_ports()
         self.form.portComboBox.addItems(ports)
-
 
     def set_available_baudrates(self):
         self.form.baudrateComboBox.clear()
@@ -114,16 +118,28 @@ class ControllerGUI:
         else:
             self.machine.move_inc(10,0)
 
-    # def keyPressEvent(self, e):
-    #     if self.form.keyboardCheckBox.isChecked():
-    #         if e.key() ==QtCore.Qt.Key_Up:
-    #             print 'Up!'
-    #         elif e.key() ==QtCore.Qt.Key_Down:
-    #             print 'Down!'
-    #         elif e.key() ==QtCore.Qt.Key_Left:
-    #             print 'Left!'
-    #         elif e.key() ==QtCore.Qt.Key_Right:
-    #             print 'Right!'
+    def keyPressEvent(self, e):
+        if self.findChild(QtGui.QWidget).keyboardCheckBox.isChecked():
+            if e.key() ==QtCore.Qt.Key_Up:
+                self.onMoveUpButton()
+            elif e.key() ==QtCore.Qt.Key_Down:
+                self.onMoveDownButton()
+            elif e.key() ==QtCore.Qt.Key_Left:
+                self.onMoveLeftButton()
+            elif e.key() ==QtCore.Qt.Key_Right:
+                self.onMoveRightButton()
+            else:
+                e.ignore()
+        else:
+            e.ignore()
+
+    def closeEvent(self, event):
+        if self.machine:
+            self.machine.disconnect()
+        event.accept()
+
+    def focusOutEvent(self, event):
+        self.setFocus()
 
 
 class ToolheadWidgetFactory:
@@ -147,7 +163,8 @@ if __name__ == '__main__':
     tool = SimpleMagnetToolhead(4,5)
     cxy.set_toolhead(tool)
 
-    gui = ControllerGUI(cxy)
-    gui.form.show()
+    gui = ControllerGUI(None, cxy)
+    gui.show()
+    # gui.form.show()
 
     sys.exit(app.exec_())
