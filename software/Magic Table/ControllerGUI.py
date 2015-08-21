@@ -18,6 +18,7 @@ class ControllerGUI(QtGui.QWidget):
         self.form = None
 
         self.loadUI()
+        self.add_tools()
 
     def loadUI(self):
         # Load UI
@@ -40,6 +41,16 @@ class ControllerGUI(QtGui.QWidget):
         self.form.leftButton.clicked.connect(self.onMoveLeftButton)
         self.form.rightButton.clicked.connect(self.onMoveRightButton)
         self.form.keyboardCheckBox.stateChanged.connect(self.setFocus)
+
+        self.form.toolsGroupBox.setEnabled(False)
+
+    def add_tools(self):
+        if self.machine.toolhead.type == 'SimpleMagnet':
+            from SimpleMagnetToolhead import SimpleMagnetToolheadWidget
+            w = SimpleMagnetToolheadWidget(None, self.machine.toolhead)
+            self.form.toolsGroupBox.setLayout(w)
+        else:
+            raise AttributeError("Toolhead type not supported yet!")
 
     def set_available_ports(self):
         self.form.portComboBox.clear()
@@ -65,6 +76,7 @@ class ControllerGUI(QtGui.QWidget):
                 self.form.connectButton.setText('Disconnect')
                 self.form.statusLabel.setText('Status: connected')
                 self.form.homeButton.setEnabled(True)
+                self.form.toolsGroupBox.setEnabled(True)
             except:
                 self.form.statusLabel.setText('Status: Error')
         elif self.form.connectButton.text() == 'Disconnect':
@@ -75,6 +87,7 @@ class ControllerGUI(QtGui.QWidget):
                 self.form.statusLabel.setText('Status: disconnected')
                 self.form.homeButton.setEnabled(False)
                 self.setMoveControlsEnabled(False)
+                self.form.toolsGroupBox.setEnabled(False)
             except:
                 self.form.statusLabel.setText('Status: Error')
 
@@ -140,17 +153,6 @@ class ControllerGUI(QtGui.QWidget):
 
     def focusOutEvent(self, event):
         self.setFocus()
-
-
-class ToolheadWidgetFactory:
-    def __init__(self):
-        pass
-
-    def loadUI(self):
-        pass
-
-    def createWidget(self, type):
-        pass
 
 
 if __name__ == '__main__':

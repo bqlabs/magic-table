@@ -17,6 +17,7 @@ class SimpleMagnetToolhead:
             self.magnets.append({'pin':pin, 'status':'off'})
 
     def set_magnet(self, id, status):
+        print "Called with args: %d %s" % (id, status)
         try:
             # Get value equivalent to the selected status
             if status == 'on':
@@ -24,7 +25,7 @@ class SimpleMagnetToolhead:
             elif status == 'off':
                 value = 0
             else:
-                raise AttributeError('Status %s not supported for magnet %d' % (status, id))
+                raise AttributeError('Status %s not supported for magnet %d' % (str(status), id))
 
             # Get corresponding pin
             pin = self.magnets[id]['pin']
@@ -37,7 +38,8 @@ class SimpleMagnetToolhead:
 
         except IndexError:
             raise Exception('Error: magnet %d is not attached to toolhead yet.' % id)
-        except AttributeError:
+        except AttributeError, e:
+            print str(e)
             raise Exception('Error: Toolhead not attached to CoreXY yet.')
 
 
@@ -45,7 +47,32 @@ class SimpleMagnetToolhead:
     def _set_comm_interface(self, interface):
         self.comm = interface
 
+try:
+    from PySide import QtCore, QtGui
 
+    class SimpleMagnetToolheadWidget(QtGui.QVBoxLayout):
+
+        state_dict = {0:'off', 2:'on'}
+
+        def __init__(self, parent, toolhead):
+            QtGui.QVBoxLayout.__init__(self, parent)
+            self.toolhead = toolhead
+            self.create_ui()
+
+        def create_ui(self):
+            for i, magnet in enumerate(self.toolhead.magnets):
+                widget = QtGui.QCheckBox('Magnet %d' % i)
+                widget.setChecked(False)
+                fn = lambda state, magnet_id = i: self.toolhead.set_magnet(magnet_id, self.state_dict[state])
+                widget.stateChanged.connect(fn)
+                self.addWidget(widget)
+            self.addStretch(1)
+
+
+
+
+except ImportError:
+    print "[Warning] PySide not installed, widget not loaded"
 
 if __name__ == '__main__':
     from CoreXY import CoreXY
