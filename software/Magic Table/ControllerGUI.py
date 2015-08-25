@@ -90,14 +90,18 @@ class ControllerGUI(QtGui.QWidget):
                 self.form.toolsGroupBox.setEnabled(False)
             except:
                 self.form.statusLabel.setText('Status: Error')
+            finally:
+                self.updatePos()
 
     def onResetButton(self):
         self.machine.reset()
         self.form.statusLabel.setText('Status: Reset')
+        self.updatePos()
 
     def onHomeButton(self):
         self.machine.home()
         self.setMoveControlsEnabled(True)
+        self.updatePos()
 
     def setMoveControlsEnabled(self, state):
         self.form.leftButton.setEnabled(state)
@@ -112,24 +116,36 @@ class ControllerGUI(QtGui.QWidget):
             self.machine.move_inc(0,1)
         else:
             self.machine.move_inc(0,10)
+        self.updatePos()
 
     def onMoveDownButton(self):
         if self.form.precisionCheckBox.isChecked():
             self.machine.move_inc(0,-1)
         else:
             self.machine.move_inc(0,-10)
+        self.updatePos()
 
     def onMoveLeftButton(self):
         if self.form.precisionCheckBox.isChecked():
             self.machine.move_inc(-1,0)
         else:
             self.machine.move_inc(-10,0)
+        self.updatePos()
 
     def onMoveRightButton(self):
         if self.form.precisionCheckBox.isChecked():
             self.machine.move_inc(1,0)
         else:
             self.machine.move_inc(10,0)
+        self.updatePos()
+
+    def updatePos(self):
+        if self.form.upButton.isEnabled():
+            self.form.xPosLabel.setText('x: %d'%self.machine.x)
+            self.form.yPosLabel.setText('y: %d'%self.machine.y)
+        else:
+            self.form.xPosLabel.setText('x: ?')
+            self.form.yPosLabel.setText('y: ?')
 
     def keyPressEvent(self, e):
         if self.findChild(QtGui.QWidget).keyboardCheckBox.isChecked():

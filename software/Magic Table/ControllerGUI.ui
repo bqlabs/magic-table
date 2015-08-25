@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>440</height>
+    <width>320</width>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -197,18 +197,66 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="precisionCheckBox">
-          <property name="text">
-           <string>Fine</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="fineLayout">
+          <item>
+           <widget class="QCheckBox" name="precisionCheckBox">
+            <property name="text">
+             <string>Fine</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="xPosLabel">
+            <property name="text">
+             <string>x: ?</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="keyboardCheckBox">
-          <property name="text">
-           <string>Keyboard</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="keyboardLayout">
+          <item>
+           <widget class="QCheckBox" name="keyboardCheckBox">
+            <property name="text">
+             <string>Keyboard</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="yPosLabel">
+            <property name="text">
+             <string>y: ?</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

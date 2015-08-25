@@ -17,7 +17,7 @@ class SimpleMagnetToolhead:
             self.magnets.append({'pin':pin, 'status':'off'})
 
     def set_magnet(self, id, status):
-        print "Called with args: %d %s" % (id, status)
+        # print "Called with args: %d %s" % (id, status)
         try:
             # Get value equivalent to the selected status
             if status == 'on':
