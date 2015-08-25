@@ -12,6 +12,9 @@ class Calibration:
         self.image_name = None
         self.image = None
 
+        self.calibrating = False
+        self.real_points = []
+
     # Data loading members
     # --------------------------------------------------------------------------
     class LoadException(ValueError):
@@ -27,7 +30,7 @@ class Calibration:
             with zfile.open('calibration.xml', 'rU') as xmlfile:
                 self.xmlcontents = xmlfile.read()
 
-            self.parse_xml()
+            self._parse_xml()
 
             # Load image if necessary
             if self.image_name:
@@ -37,8 +40,7 @@ class Calibration:
                 else:
                     raise Calibration.LoadException("Incorrect calibration file (could not load image)")
 
-
-    def parse_xml(self):
+    def _parse_xml(self):
         if not self.xmlcontents:
             raise Calibration.LoadException('Could not load xml data')
 
@@ -90,6 +92,34 @@ class Calibration:
             except (IndexError, AttributeError) as e:
                 print str(e)
                 continue
+
+    # Calibration methods stuff
+    # ---------------------------------------------------------------------------------------
+    def start(self):
+        """ Starts the calibration process """
+        pass
+
+    def abort(self):
+        """ Stops a calibration process """
+        pass
+
+    def set_current_point_pos(self, point):
+        """ Sets the x,y values for the current point """
+        pass
+
+    def get_current_point_data(self, point):
+
+        pass
+
+    def next(self):
+        """
+        Go to next calibration point.
+        :return: None if there is no point left
+        """
+        pass
+
+    def get_calibration_xml(self):
+        pass
 
 
 if __name__ == '__main__':
