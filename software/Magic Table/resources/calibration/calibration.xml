@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--Magic Table Calibration file-->
+<calibration>
+    <image>
+        <name>ouija.jpg</name>
+    </image>
+    <point>
+        <name>Yes</name>
+        <symbol>yes</symbol>
+        <coordinates x="218" y="103"></coordinates>
+    </point>
+    <point>
+        <name>No</name>
+        <symbol>no</symbol>
+        <coordinates x="643" y="103"></coordinates>
+    </point>
+</calibration>
