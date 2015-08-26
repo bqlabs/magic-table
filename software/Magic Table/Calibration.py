@@ -1,6 +1,6 @@
 import os
 import zipfile
-from xml.dom.minidom import parseString
+from xml.dom.minidom import parseString, getDOMImplementation
 
 __author__ = 'def'
 
@@ -12,7 +12,9 @@ class Calibration:
         self.image_name = None
         self.image = None
 
+        # Calibration-related stuff
         self.calibrating = False
+        self.index = None
         self.real_points = []
 
     # Data loading members
@@ -95,31 +97,97 @@ class Calibration:
 
     # Calibration methods stuff
     # ---------------------------------------------------------------------------------------
+    class CalibrationException(BaseException):
+        pass
+
     def start(self):
         """ Starts the calibration process """
-        pass
+        if not self.calibrating:
+            self.calibrating = True
+            self.index = 0
+            self.real_points = []
+        else:
+            raise Calibration.CalibrationException("Calibration already started")
 
     def abort(self):
         """ Stops a calibration process """
-        pass
+        if self.calibrating:
+            self.calibrating = False
+            self.index = None
+            self.real_points = []
+        else:
+            raise Calibration.CalibrationException("Calibration not started")
 
     def set_current_point_pos(self, point):
         """ Sets the x,y values for the current point """
-        pass
+        if self.calibrating:
+            try:
+                self.real_points[self.index] = point
+            except IndexError, e:
+                self.real_points.append(point)
+        else:
+            raise Calibration.CalibrationException("Calibration not started")
 
-    def get_current_point_data(self, point):
-
-        pass
+    def get_current_point_data(self):
+        if self.calibrating:
+            return self.points[self.index]['coordinates']
+        else:
+            raise Calibration.CalibrationException("Calibration not started")
 
     def next(self):
         """
         Go to next calibration point.
         :return: None if there is no point left
         """
-        pass
+        if self.calibrating:
+            if self.index < len(self.points)-1:
+                self.index += 1
+                return True
+            else:
+                self.calibrating = False
+                return None
+        else:
+            raise Calibration.CalibrationException("Calibration not started")
 
     def get_calibration_xml(self):
-        pass
+        if len(self.points) != len(self.real_points):
+            raise Calibration.CalibrationException("Not enough calibration points")
+
+        dom = parseString(self.xmlcontents)
+        # impl = getDOMImplementation()
+
+        point_nodes = dom.getElementsByTagName("point")
+        for point_node in point_nodes:
+            try:
+                # Get name
+                point_name_node = point_node.getElementsByTagName("name")[0]
+                point_name_text_node = point_name_node.childNodes[0]
+                if point_name_text_node.nodeType == point_name_text_node.TEXT_NODE:
+                    name = point_name_text_node.data
+                else:
+                    raise
+
+                # Check name and add new node
+                for i, point in enumerate(self.points):
+                    if point['name'] == name:
+                        # Add node
+                        realpos_element = dom.createElement('realpos')
+                        realpos_element.setAttribute('x', str(self.real_points[i][0]))
+                        realpos_element.setAttribute('y', str(self.real_points[i][1]))
+                        point_node.appendChild(realpos_element)
+
+            except (IndexError, AttributeError) as e:
+                print str(e)
+                continue
+
+
+        return dom.toprettyxml(indent='    ', encoding='utf-8')
+
+    def save_calibration_file(self, filepath):
+        xmlcontents = self.get_calibration_xml()
+        with open(filepath, 'w') as f:
+            f.write(xmlcontents)
+
 
 
 if __name__ == '__main__':
@@ -132,3 +200,20 @@ if __name__ == '__main__':
     print calibration.points
     assert calibration.image_name, 'Image path not loaded'
     assert calibration.image, 'Image not loaded'
+
+    calibration.start()
+
+    watchdog = 0
+    while watchdog < 10:
+        print "Current point: (%.2f, %.2f)" % calibration.get_current_point_data()
+        calibration.set_current_point_pos((100, 100))
+        if not calibration.next():
+            break
+        watchdog +=1
+    assert watchdog == 1, 'Calibration went wrong'
+    print calibration.real_points
+
+    assert calibration.get_calibration_xml(), 'No xml output'
+    print calibration.get_calibration_xml().split('\n')
+
+    calibration.save_calibration_file('calibration.xml')
