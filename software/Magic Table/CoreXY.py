@@ -13,6 +13,9 @@ __author__ = 'def'
 class CoreXY:
     """ Basic class to control a CoreXY with Marlin Firmware """
 
+    class ConnectException(BaseException):
+        pass
+
     x_limit = 200
     y_limit = 300
 
@@ -36,7 +39,7 @@ class CoreXY:
             if self.comm.online:
                 return True
             else:
-                raise Exception('Could not connect to the device')
+                raise CoreXY.ConnectException('Could not connect to the device')
 
     def disconnect(self):
         if self.comm.online:
@@ -45,7 +48,7 @@ class CoreXY:
             if not self.comm.online:
                 return True
             else:
-                raise Exception('Could not disconnect from the device')
+                raise CoreXY.ConnectException('Could not disconnect from the device')
 
     def reset(self):
         self.comm.reset()

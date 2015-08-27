@@ -9,9 +9,14 @@ __author__ = 'def'
 class CalibrationWidget(QtGui.QWidget):
     def __init__(self, parent, calibration):
         super(CalibrationWidget, self).__init__()
-
-        # self.form = None
         self.calibration = calibration
+
+        self.nextButton = None
+        self.cancelButton = None
+        self.progressBar = None
+        self.targetPointLabel = None
+        self.targetImageLabel = None
+        self.toolheadPosLabel = None
 
         self.loadUI()
         self.update()
