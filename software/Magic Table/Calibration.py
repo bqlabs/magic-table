@@ -130,7 +130,13 @@ class Calibration:
 
     def get_current_point_data(self):
         if self.calibrating:
-            return self.points[self.index]['coordinates']
+            return self.points[self.index]
+        else:
+            raise Calibration.CalibrationException("Calibration not started")
+
+    def get_progress(self):
+        if self.calibrating:
+            return self.index/float(len(self.points))
         else:
             raise Calibration.CalibrationException("Calibration not started")
 
@@ -205,7 +211,7 @@ if __name__ == '__main__':
 
     watchdog = 0
     while watchdog < 10:
-        print "Current point: (%.2f, %.2f)" % calibration.get_current_point_data()
+        print "Current point: (%.2f, %.2f)" % calibration.get_current_point_data()['coordinates']
         calibration.set_current_point_pos((100, 100))
         if not calibration.next():
             break

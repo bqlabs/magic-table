@@ -54,12 +54,12 @@ class ControllerGUI(QtGui.QWidget):
 
     def set_available_ports(self):
         self.form.portComboBox.clear()
-        ports = CoreXY.get_available_ports()
+        ports = self.machine.get_available_ports()
         self.form.portComboBox.addItems(ports)
 
     def set_available_baudrates(self):
         self.form.baudrateComboBox.clear()
-        self.form.baudrateComboBox.addItems(CoreXY.get_available_baudrates())
+        self.form.baudrateComboBox.addItems(self.machine.get_available_baudrates())
         self.form.baudrateComboBox.setCurrentIndex(self.form.baudrateComboBox.findText(self.defaultBaudrate))
 
     def onPortButton(self):
@@ -183,6 +183,5 @@ if __name__ == '__main__':
 
     gui = ControllerGUI(None, cxy)
     gui.show()
-    # gui.form.show()
 
     sys.exit(app.exec_())

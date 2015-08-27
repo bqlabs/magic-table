@@ -42,8 +42,6 @@ class SimpleMagnetToolhead:
             print str(e)
             raise Exception('Error: Toolhead not attached to CoreXY yet.')
 
-
-
     def _set_comm_interface(self, interface):
         self.comm = interface
 
@@ -68,9 +66,6 @@ try:
                 self.addWidget(widget)
             self.addStretch(1)
 
-
-
-
 except ImportError:
     print "[Warning] PySide not installed, widget not loaded"
 
@@ -93,9 +88,7 @@ if __name__ == '__main__':
         if cxy.toolhead.magnets[1]['pin'] != 5 or cxy.toolhead.magnets[1]['status'] != 'off':
             print '[Error] Toolhead configuration of magnet 0 went wrong'
     else:
-        print '[Error] Tooldhead configuration went wrong: incorrect number of magnets'
-
-
+        print '[Error] Toolhead configuration went wrong: incorrect number of magnets'
 
     # Use toolhead
     cxy.home()
