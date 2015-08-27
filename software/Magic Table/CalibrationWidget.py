@@ -10,7 +10,7 @@ class CalibrationWidget(QtGui.QWidget):
     def __init__(self, parent, calibration):
         super(CalibrationWidget, self).__init__()
 
-        self.form = None
+        # self.form = None
         self.calibration = calibration
 
         self.loadUI()
@@ -18,12 +18,23 @@ class CalibrationWidget(QtGui.QWidget):
 
     def loadUI(self):
         # Load UI
-        load_ui(os.path.join(os.path.realpath(os.path.dirname(__file__)), 'CalibrationWizard.ui'), self)
-        self.form = self.findChild(QtGui.QWidget)
+        main_widget = load_ui(os.path.join(os.path.realpath(os.path.dirname(__file__)), 'CalibrationWizard.ui'), self)
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(main_widget)
+        self.setLayout(layout)
 
-        self.form.nextButton.clicked.connect(self.updateProgressBar)
-        self.form.nextButton.clicked.connect(self.onNextButtonClicked)
-        self.form.cancelButton.clicked.connect(self.abort)
+        # Find references to controls
+        self.nextButton = self.findChild(QtGui.QPushButton, "nextButton")
+        self.cancelButton = self.findChild(QtGui.QPushButton, "cancelButton")
+        self.progressBar = self.findChild(QtGui.QProgressBar, "progressBar")
+        self.targetPointLabel = self.findChild(QtGui.QLabel, "targetPointLabel")
+        self.targetImageLabel = self.findChild(QtGui.QLabel, "targetImageLabel")
+        self.toolheadPosLabel = self.findChild(QtGui.QLabel, "toolheadPosLabel")
+
+        # Connect signals
+        self.nextButton.clicked.connect(self.updateProgressBar)
+        self.nextButton.clicked.connect(self.onNextButtonClicked)
+        self.cancelButton.clicked.connect(self.abort)
 
     def update(self):
         self.updateProgressBar()
@@ -31,7 +42,7 @@ class CalibrationWidget(QtGui.QWidget):
 
     def start(self):
         # Ask the user for a file
-        filename, ext = QtGui.QFileDialog.getOpenFileName(self, "Select calibration file", filter='*.zip' )
+        filename, ext = QtGui.QFileDialog.getOpenFileName(None, "Select calibration file", filter='*.zip' )
         # filename = '/home/def/Documents/CoreXY/software/Magic Table/resources/calibration/calibration.zip'
 
         if filename:
@@ -69,7 +80,7 @@ class CalibrationWidget(QtGui.QWidget):
 
         # Next point
         if not self.calibration.next():
-            filename, ext = QtGui.QFileDialog.getSaveFileName(self, "Output file", filter='*.xml')
+            filename, ext = QtGui.QFileDialog.getSaveFileName(None, "Output file", filter='*.xml')
 
             if filename:
                 self.calibration.save_calibration_file(filename)
@@ -80,21 +91,21 @@ class CalibrationWidget(QtGui.QWidget):
 
     def updateProgressBar(self):
         try:
-            self.form.progressBar.setValue(self.calibration.get_progress()*100)
+            self.progressBar.setValue(self.calibration.get_progress()*100)
         except:
-            self.form.progressBar.setValue(0)
+            self.progressBar.setValue(0)
 
     def updateLabels(self):
         try:
             current_point = self.calibration.get_current_point_data()
-            self.form.targetPointLabel.setText('Target point: %s' % current_point['name'])
-            self.form.targetImageLabel.setText('Target image coordinates: (%.2f, %.2f)'%current_point['coordinates'])
-            self.form.toolheadPosLabel.setText('Current toolhead position: (%.2f, %.2f)' % (0,0))
+            self.targetPointLabel.setText('Target point: %s' % current_point['name'])
+            self.targetImageLabel.setText('Target image coordinates: (%.2f, %.2f)'%current_point['coordinates'])
+            self.toolheadPosLabel.setText('Current toolhead position: (%.2f, %.2f)' % (0,0))
 
         except Calibration.CalibrationException, e:
-            self.form.targetPointLabel.setText('Target point: "Point"')
-            self.form.targetImageLabel.setText('Target image coordinates: (u, v)')
-            self.form.toolheadPosLabel.setText('Current toolhead position: (x, y)')
+            self.targetPointLabel.setText('Target point: "Point"')
+            self.targetImageLabel.setText('Target image coordinates: (u, v)')
+            self.toolheadPosLabel.setText('Current toolhead position: (x, y)')
 
 
 if __name__ == '__main__':
