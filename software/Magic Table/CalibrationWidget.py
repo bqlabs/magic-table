@@ -2,14 +2,18 @@ from PySide import QtCore, QtGui
 from UtilsGUI import load_ui
 import sys, os
 from Calibration import Calibration
+from CoreXY import CoreXY
+from CoreXYEventListener import CoreXYEventListener
 
 __author__ = 'def'
 
 
-class CalibrationWidget(QtGui.QWidget):
-    def __init__(self, parent, calibration):
+class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
+    def __init__(self, parent, calibration, machine):
         super(CalibrationWidget, self).__init__()
         self.calibration = calibration
+        self.machine = machine
+        self.machine.add_listener(self)
 
         self.nextButton = None
         self.cancelButton = None
@@ -100,25 +104,54 @@ class CalibrationWidget(QtGui.QWidget):
         except:
             self.progressBar.setValue(0)
 
+    def updateToolheadPos(self):
+        try:
+            current_toolhead_pos = (self.machine.x, self.machine.y)
+            self.toolheadPosLabel.setText('Current toolhead position: (%.2f, %.2f)' % current_toolhead_pos)
+        except TypeError:
+            self.toolheadPosLabel.setText('Current toolhead position: (?, ?)')
+
     def updateLabels(self):
         try:
             current_point = self.calibration.get_current_point_data()
             self.targetPointLabel.setText('Target point: %s' % current_point['name'])
             self.targetImageLabel.setText('Target image coordinates: (%.2f, %.2f)'%current_point['coordinates'])
-            self.toolheadPosLabel.setText('Current toolhead position: (%.2f, %.2f)' % (0,0))
-
         except Calibration.CalibrationException, e:
             self.targetPointLabel.setText('Target point: "Point"')
             self.targetImageLabel.setText('Target image coordinates: (u, v)')
-            self.toolheadPosLabel.setText('Current toolhead position: (x, y)')
+
+        self.updateToolheadPos()
+
+    # CoreXYEventListener interface:
+    def on_connect(self):
+        self.nextButton.setEnabled(False)
+        self.hintLabel.setText("Please home the machine to the zero position")
+
+    def on_disconnect(self):
+        self.nextButton.setEnabled(False)
+        self.hintLabel.setText("Please connect to the machine to start")
+
+    def on_home(self):
+        self.nextButton.setEnabled(True)
+        self.hintLabel.setText("Please move the toolhead to the specified point")
+        self.updateToolheadPos()
+
+    def on_move(self, x, y):
+        print "moved!"
+        self.updateToolheadPos()
 
 
 if __name__ == '__main__':
     from Calibration import Calibration
+    from CoreXY import CoreXY
+    from SimpleMagnetToolhead import SimpleMagnetToolhead
 
     app = QtGui.QApplication(sys.argv)
 
     calibration = Calibration()
-    gui = CalibrationWidget(None, calibration)
+    cxy = CoreXY()
+    tool = SimpleMagnetToolhead(4,5)
+    cxy.set_toolhead(tool)
+    gui = CalibrationWidget(None, calibration, cxy)
     gui.start()
     sys.exit(app.exec_())
