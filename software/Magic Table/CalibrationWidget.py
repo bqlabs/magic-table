@@ -39,10 +39,13 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
         self.targetPointLabel = self.findChild(QtGui.QLabel, "targetPointLabel")
         self.targetImageLabel = self.findChild(QtGui.QLabel, "targetImageLabel")
         self.toolheadPosLabel = self.findChild(QtGui.QLabel, "toolheadPosLabel")
+        self.hintLabel = self.findChild(QtGui.QLabel, "hintLabel")
 
         # Connect signals
         self.nextButton.clicked.connect(self.updateProgressBar)
         self.nextButton.clicked.connect(self.onNextButtonClicked)
+        self.nextButton.setEnabled(False)
+        self.hintLabel.setText("Please connect to the machine to start")
         self.cancelButton.clicked.connect(self.abort)
 
     def update(self):

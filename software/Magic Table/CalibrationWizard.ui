@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>CalibrationWidget</class>
  <widget class="QWidget" name="CalibrationWidget">
-  <property name="objectName" >
-   <string notr="true" >CalibrationWidget</string>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -84,7 +81,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="hintLabel">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
