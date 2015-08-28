@@ -89,7 +89,7 @@ class CoreXY:
             self.comm.send("G1 F6000 X%s Y%s\n" % (x, y))
             self.x, self.y = x, y
             for listener in self.listeners:
-                listener.on_move(x, y)
+                listener.on_move(self.x, self.y)
         else:
             raise AttributeError("Coordinates (%.2f, .2f) out of limits (%.2f, %.2f)"%(x, y, self.x_limit, self.y_limit))
 
@@ -109,10 +109,17 @@ class CoreXY:
         self.comm.send("G1 F6000 X%s Y%s\n" % (new_x, new_y))
         self.x, self.y = new_x, new_y
 
+        for listener in self.listeners:
+            listener.on_move(self.x, self.y)
+
     # Toolhead functions
     def set_toolhead(self, toolhead):
         self.toolhead = toolhead
         self.toolhead._set_comm_interface(self.comm)
+
+    # Listener functions
+    def add_listener(self, listener):
+        self.listeners.append(listener)
 
 
 if __name__ == '__main__':

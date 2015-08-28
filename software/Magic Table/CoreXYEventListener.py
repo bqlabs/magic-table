@@ -1,7 +1,7 @@
 __author__ = 'def'
 
 
-class CoreXYEventListener:
+class CoreXYEventListener(object):
 
     def on_connect(self):
         raise NotImplementedError
