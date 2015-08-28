@@ -6,6 +6,7 @@ pronterface_path = '/home/def/Repositories/Printrun'
 sys.path.append(pronterface_path)
 
 from printrun.printcore import printcore
+from CoreXYEventListener import CoreXYEventListener
 
 __author__ = 'def'
 
@@ -31,12 +32,16 @@ class CoreXY:
 
         self.toolhead = None
 
+        self.listeners = []
+
     # Basic functionality (provided by the communications interface)
     def connect(self):
         if not self.comm.online:
             self.comm.connect(self.port, self.baudrate)
             time.sleep(2)
             if self.comm.online:
+                for listener in self.listeners:
+                    listener.on_connect()
                 return True
             else:
                 raise CoreXY.ConnectException('Could not connect to the device')
@@ -46,6 +51,8 @@ class CoreXY:
             self.comm.disconnect()
             time.sleep(2)
             if not self.comm.online:
+                for listener in self.listeners:
+                    listener.on_disconnect()
                 return True
             else:
                 raise CoreXY.ConnectException('Could not disconnect from the device')
@@ -73,12 +80,16 @@ class CoreXY:
     def home(self):
         self.comm.send(self.home_cmd)
         self.x, self.y = 0, 0
+        for listener in self.listeners:
+            listener.on_home()
         return True
 
     def move(self, x, y, speed=None):
         if 0 <= x <= self.x_limit and 0 <= y <= self.y_limit:
             self.comm.send("G1 F6000 X%s Y%s\n" % (x, y))
             self.x, self.y = x, y
+            for listener in self.listeners:
+                listener.on_move(x, y)
         else:
             raise AttributeError("Coordinates (%.2f, .2f) out of limits (%.2f, %.2f)"%(x, y, self.x_limit, self.y_limit))
 
