@@ -13,19 +13,22 @@ class MagicTableMainWindow(QtGui.QWidget):
         # Init MainWindow
         super(MagicTableMainWindow, self).__init__()
         self.setWindowTitle('Magic Table')
+
+        # Create main layout
         layout = QtGui.QHBoxLayout()
 
         # Load Control Panel
         self.machine = machine
         self.control_panel = ControllerGUI(None, machine)
 
+        # Add widgets to main layout
         layout.addWidget(self.control_panel)
         self.setLayout(layout)
 
         # Add side toolbar
         self.buttonLayout = QtGui.QVBoxLayout()
 
-        # Add calibration workspace
+        # Add calibration workspace button
         self.calibration = None
         self.calibrationWidget = None
         self.calibrationButton = QtGui.QPushButton('->')
@@ -33,12 +36,13 @@ class MagicTableMainWindow(QtGui.QWidget):
         self.calibrationButton.setCheckable(True)
         self.calibrationButton.toggled.connect(self.onCalibrationButtonEnabled)
         self.buttonLayout.addWidget(self.calibrationButton)
-        self.initCalibration()
 
         # Add buttons to layout
         self.buttonLayout.addStretch(1)
         self.layout().addLayout(self.buttonLayout)
 
+        # Add calibration workspace
+        self.initCalibration()
 
     def initCalibration(self):
         # Create calibration widget
@@ -48,6 +52,7 @@ class MagicTableMainWindow(QtGui.QWidget):
         self.onCalibrationButtonDisabled()
 
     def onCalibrationButtonEnabled(self, checked):
+
         if not checked:
             return self.onCalibrationButtonDisabled()
 
@@ -56,6 +61,7 @@ class MagicTableMainWindow(QtGui.QWidget):
 
     def onCalibrationButtonDisabled(self):
         self.calibrationWidget.abort()
+        self.adjustSize()
 
     def closeEvent(self, event):
         try:
