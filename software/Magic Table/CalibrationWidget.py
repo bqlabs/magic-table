@@ -55,7 +55,6 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
     def start(self):
         # Ask the user for a file
         filename, ext = QtGui.QFileDialog.getOpenFileName(None, "Select calibration file", filter='*.zip' )
-        # filename = '/home/def/Documents/CoreXY/software/Magic Table/resources/calibration/calibration.zip'
 
         if filename:
             # Try to open the calibration file
@@ -82,6 +81,11 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
 
         if self.parent():
             self.hide()
+            try:
+                self.parent().adjustSize()
+                self.parent().calibrationButton.setChecked(False)
+            except AttributeError, e:
+                print str(e)
         else:
             self.close()
 
