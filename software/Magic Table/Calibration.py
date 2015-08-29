@@ -37,7 +37,7 @@ class Calibration:
             # Load image if necessary
             if self.image_name:
                 if self.image_name in zfile.namelist():
-                    with zfile.open(self.image_name, 'r') as imagefile:
+                    with zfile.open(self.image_name, 'rU') as imagefile:
                         self.image = imagefile.read()
                 else:
                     raise Calibration.LoadException("Incorrect calibration file (could not load image)")

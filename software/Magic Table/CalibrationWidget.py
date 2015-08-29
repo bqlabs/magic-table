@@ -21,6 +21,10 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
         self.targetPointLabel = None
         self.targetImageLabel = None
         self.toolheadPosLabel = None
+        self.hintLabel = None
+        self.graphicsView = None
+        self.pixmap = QtGui.QPixmap()
+        self.original_rect = None
 
         self.loadUI()
         self.update()
@@ -40,6 +44,7 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
         self.targetImageLabel = self.findChild(QtGui.QLabel, "targetImageLabel")
         self.toolheadPosLabel = self.findChild(QtGui.QLabel, "toolheadPosLabel")
         self.hintLabel = self.findChild(QtGui.QLabel, "hintLabel")
+        self.graphicsView = self.findChild(QtGui.QGraphicsView, "graphicsView")
 
         # Connect signals
         self.nextButton.clicked.connect(self.updateProgressBar)
@@ -51,6 +56,7 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
     def update(self):
         self.updateProgressBar()
         self.updateLabels()
+        self.updateImage()
 
     def start(self):
         # Ask the user for a file
@@ -61,15 +67,16 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
             try:
                 self.calibration.load_zipfile(filename)
                 self.calibration.start()
+                self.loadImage()
                 self.update()
                 self.show()
                 return True
             except Calibration.LoadException:
                 QtGui.QMessageBox().critical(self, 'Error', 'File not compatible!')
                 return False
-            except Exception, e:
-                QtGui.QMessageBox().critical(self, 'Error', str(e))
-                return False
+            # except Exception, e:
+            #     QtGui.QMessageBox().critical(self, 'Error', str(e))
+            #     return False
         else:
             return False
 
@@ -128,6 +135,38 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
             self.targetImageLabel.setText('Target image coordinates: (u, v)')
 
         self.updateToolheadPos()
+
+    def loadImage(self):
+        if self.calibration.image_name:
+            self.pixmap.loadFromData(self.calibration.image, os.path.splitext(self.calibration.image_name)[1])
+            self.original_rect = self.pixmap.rect()
+            self.pixmap = self.pixmap.scaled(480, 339)
+            return True
+        else:
+            return False
+
+
+    def updateImage(self):
+        # Load image and create scene
+        scene = QtGui.QGraphicsScene()
+        scene.addItem(QtGui.QGraphicsPixmapItem(self.pixmap))
+
+        # Draw markers
+        if self.calibration.calibrating:
+            current_point = self.calibration.get_current_point_data()['coordinates']
+            scale_x = 480 / float(self.original_rect.width())
+            scale_y = 339 / float(self.original_rect.height())
+
+            try:
+                pen = QtGui.QPen(QtGui.QColor(0, 255, 0))
+                pen.setWidth(3)
+                scene.addEllipse(int(current_point[0]*scale_x-15), int(current_point[1]*scale_y-15), 30, 30, \
+                                 pen=pen)
+            except Exception, e:
+                print str(e)
+
+        self.graphicsView.setScene(scene)
+        self.graphicsView.show()
 
     # CoreXYEventListener interface:
     def on_connect(self):
