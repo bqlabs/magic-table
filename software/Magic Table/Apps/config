@@ -1,0 +1,12 @@
+[bot]
+name=Ouija Table
+token=123948162:AAGOMRbvSxS9A9QeZ0acG66DugbaNVVf1rk
+
+[users]
+allowed=3470608
+
+[ouija]
+port=/dev/ttyACM0
+baudrate=115200
+magnet1=4
+magnet2=5

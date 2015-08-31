@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Magic Table Calibration file-->
+<calibration>
+    
+    
+    <image>
+        
+        
+        <name>ouija.jpg</name>
+        
+    
+    </image>
+    
+    
+    <point>
+        
+        
+        <name>Yes</name>
+        
+        
+        <symbol>yes</symbol>
+        
+        
+        <coordinates x="218" y="103"/>
+        
+    
+        <realpos x="50" y="100"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>No</name>
+        
+        
+        <symbol>no</symbol>
+        
+        
+        <coordinates x="643" y="103"/>
+        
+    
+        <realpos x="50" y="260"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>A</name>
+        
+        
+        <symbol>a</symbol>
+        
+        
+        <coordinates x="107" y="274"/>
+        
+    
+        <realpos x="120" y="60"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>B</name>
+        
+        
+        <symbol>b</symbol>
+        
+        
+        <coordinates x="158" y="248"/>
+        
+    
+        <realpos x="110" y="80"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>C</name>
+        
+        
+        <symbol>c</symbol>
+        
+        
+        <coordinates x="213" y="228"/>
+        
+    
+        <realpos x="100" y="100"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>D</name>
+        
+        
+        <symbol>d</symbol>
+        
+        
+        <coordinates x="264" y="212"/>
+        
+    
+        <realpos x="90" y="120"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>E</name>
+        
+        
+        <symbol>e</symbol>
+        
+        
+        <coordinates x="316" y="204"/>
+        
+    
+        <realpos x="88" y="136"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>F</name>
+        
+        
+        <symbol>f</symbol>
+        
+        
+        <coordinates x="363" y="197"/>
+        
+    
+        <realpos x="88" y="156"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>G</name>
+        
+        
+        <symbol>g</symbol>
+        
+        
+        <coordinates x="418" y="195"/>
+        
+    
+        <realpos x="88" y="176"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>H</name>
+        
+        
+        <symbol>h</symbol>
+        
+        
+        <coordinates x="475" y="196"/>
+        
+    
+        <realpos x="88" y="196"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>I</name>
+        
+        
+        <symbol>i</symbol>
+        
+        
+        <coordinates x="522" y="200"/>
+        
+    
+        <realpos x="92" y="216"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>J</name>
+        
+        
+        <symbol>j</symbol>
+        
+        
+        <coordinates x="566" y="209"/>
+        
+    
+        <realpos x="93" y="231"/>
+    </point>
+        
+    
+    <point>
+        
+        
+        <name>K</name>
+        
+        
+        <symbol>k</symbol>
+        
+        
+        <coordinates x="617" y="223"/>
+        
+    
+        <realpos x="93" y="251"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>L</name>
+        
+        
+        <symbol>l</symbol>
+        
+        
+        <coordinates x="672" y="243"/>
+        
+    
+        <realpos x="106" y="268"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>M</name>
+        
+        
+        <symbol>m</symbol>
+        
+        
+        <coordinates x="728" y="271"/>
+        
+    
+        <realpos x="126" y="288"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>N</name>
+        
+        
+        <symbol>n</symbol>
+        
+        
+        <coordinates x="97" y="402"/>
+        
+    
+        <realpos x="170" y="60"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>O</name>
+        
+        
+        <symbol>o</symbol>
+        
+        
+        <coordinates x="144" y="369"/>
+        
+    
+        <realpos x="160" y="80"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>P</name>
+        
+        
+        <symbol>p</symbol>
+        
+        
+        <coordinates x="193" y="341"/>
+        
+    
+        <realpos x="140" y="94"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>Q</name>
+        
+        
+        <symbol>q</symbol>
+        
+        
+        <coordinates x="243" y="318"/>
+        
+    
+        <realpos x="130" y="114"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>R</name>
+        
+        
+        <symbol>r</symbol>
+        
+        
+        <coordinates x="300" y="300"/>
+        
+    
+        <realpos x="120" y="134"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>S</name>
+        
+        
+        <symbol>s</symbol>
+        
+        
+        <coordinates x="356" y="290"/>
+        
+    
+        <realpos x="130" y="154"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>T</name>
+        
+        
+        <symbol>t</symbol>
+        
+        
+        <coordinates x="410" y="283"/>
+        
+    
+        <realpos x="126" y="172"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>U</name>
+        
+        
+        <symbol>u</symbol>
+        
+        
+        <coordinates x="466" y="283"/>
+        
+    
+        <realpos x="126" y="192"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>V</name>
+        
+        
+        <symbol>v</symbol>
+        
+        
+        <coordinates x="523" y="294"/>
+        
+    
+        <realpos x="126" y="212"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>W</name>
+        
+        
+        <symbol>w</symbol>
+        
+        
+        <coordinates x="587" y="314"/>
+        
+    
+        <realpos x="136" y="232"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>X</name>
+        
+        
+        <symbol>x</symbol>
+        
+        
+        <coordinates x="652" y="339"/>
+        
+    
+        <realpos x="146" y="252"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>Y</name>
+        
+        
+        <symbol>y</symbol>
+        
+        
+        <coordinates x="702" y="370"/>
+        
+    
+        <realpos x="156" y="272"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>Z</name>
+        
+        
+        <symbol>z</symbol>
+        
+        
+        <coordinates x="747" y="405"/>
+        
+    
+        <realpos x="166" y="292"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>1</name>
+        
+        
+        <symbol>1</symbol>
+        
+        
+        <coordinates x="193" y="450"/>
+        
+    
+        <realpos x="186" y="82"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>2</name>
+        
+        
+        <symbol>2</symbol>
+        
+        
+        <coordinates x="240" y="450"/>
+        
+    
+        <realpos x="186" y="104"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>3</name>
+        
+        
+        <symbol>3</symbol>
+        
+        
+        <coordinates x="290" y="450"/>
+        
+    
+        <realpos x="186" y="125"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>4</name>
+        
+        
+        <symbol>4</symbol>
+        
+        
+        <coordinates x="345" y="450"/>
+        
+    
+        <realpos x="186" y="145"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>5</name>
+        
+        
+        <symbol>5</symbol>
+        
+        
+        <coordinates x="400" y="450"/>
+        
+    
+        <realpos x="186" y="166"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>6</name>
+        
+        
+        <symbol>6</symbol>
+        
+        
+        <coordinates x="450" y="450"/>
+        
+    
+        <realpos x="186" y="187"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>7</name>
+        
+        
+        <symbol>7</symbol>
+        
+        
+        <coordinates x="502" y="450"/>
+        
+    
+        <realpos x="186" y="206"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>8</name>
+        
+        
+        <symbol>8</symbol>
+        
+        
+        <coordinates x="552" y="450"/>
+        
+    
+        <realpos x="186" y="225"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>9</name>
+        
+        
+        <symbol>9</symbol>
+        
+        
+        <coordinates x="602" y="450"/>
+        
+    
+        <realpos x="186" y="243"/>
+    </point>
+    
+    
+    <point>
+        
+        
+        <name>0</name>
+        
+        
+        <symbol>0</symbol>
+        
+        
+        <coordinates x="660" y="450"/>
+        
+    
+        <realpos x="186" y="265"/>
+    </point>
+    
+
+</calibration>
