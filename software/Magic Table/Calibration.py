@@ -216,6 +216,22 @@ class Calibration:
         with open(filepath, 'w') as f:
             f.write(xmlcontents)
 
+    @staticmethod
+    def load_calibration_file(filepath):
+        # Load xml file contents
+        with open(filepath, 'r') as xmlfile:
+            xmlcontents = xmlfile.read()
+
+        # Parse xml
+        dom = parseString(xmlcontents)
+
+        # Get points
+        points = Calibration._extract_point_data(dom)
+
+        # Craft point dict
+        return dict([ (point['symbol'], point['realpos']) for point in points])
+
+
 
 
 if __name__ == '__main__':
@@ -245,3 +261,6 @@ if __name__ == '__main__':
     print calibration.get_calibration_xml().split('\n')
 
     calibration.save_calibration_file('calibration.xml')
+
+    data = Calibration.load_calibration_file('calibration.xml')
+    print data
