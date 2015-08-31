@@ -31,7 +31,7 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
 
     def loadUI(self):
         # Load UI
-        main_widget = load_ui(os.path.join(os.path.realpath(os.path.dirname(__file__)), 'CalibrationWizard.ui'), self)
+        main_widget = load_ui(os.path.join(os.path.realpath(os.path.dirname(__file__)), 'CalibrationWidget.ui'), self)
         layout = QtGui.QVBoxLayout()
         layout.addWidget(main_widget)
         self.setLayout(layout)
