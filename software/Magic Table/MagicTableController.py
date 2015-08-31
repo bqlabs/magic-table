@@ -1,5 +1,6 @@
 from CoreXY import CoreXY
 from SimpleMagnetToolhead import SimpleMagnetToolhead
+from Calibration import Calibration
 
 import os
 import ConfigParser
@@ -18,6 +19,8 @@ class MagicTableController(CoreXY):
         pass
 
     def __init__(self, config_file=None):
+        self.points = None
+
         if config_file:
             config = ConfigParser.ConfigParser()
             config.read([os.path.expanduser(config_file)])
@@ -56,6 +59,15 @@ class MagicTableController(CoreXY):
         except ConfigParser.NoOptionError, ConfigParser.NoSectionError:
             raise MagicTableController.MagicTableException("Bad config file")
 
+    def load_calibration_from_file(self, filepath):
+        self.points = Calibration.load_calibration_file(filepath)
+
+    def go_to(self, point_name):
+        try:
+            coords = self.points[point_name]
+            self.move(coords[0], coords[1])
+        except KeyError, TypeError:
+            raise MagicTableController.MagicTableException("Point not configured")
 
 if __name__ == '__main__':
     import time
@@ -107,8 +119,22 @@ if __name__ == '__main__':
         print '[Error] Could not turn off magnet'
 
 
+    time.sleep(5)
+    magic_table.load_calibration_from_file('calibration.xml')
+    magic_table.go_to('yes')
+    if magic_table.x == 100 and magic_table.y == 100:
+        print '[ok] Go to point \'yes\' movement successful'
+    else:
+        print '[Error] Error in movement instruction to (%.2f, %.2f)'%(magic_table.x, magic_table.y)
+
+
+    time.sleep(5)
+    magic_table.home()
+
+
     if magic_table.disconnect():
         print '[ok] Disconnected!'
     else:
         print '[Error] Could not disconnect'
         exit()
+

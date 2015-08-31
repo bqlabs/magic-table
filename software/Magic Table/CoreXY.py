@@ -11,7 +11,7 @@ from CoreXYEventListener import CoreXYEventListener
 __author__ = 'def'
 
 
-class CoreXY:
+class CoreXY(object):
     """ Basic class to control a CoreXY with Marlin Firmware """
 
     class ConnectException(BaseException):
