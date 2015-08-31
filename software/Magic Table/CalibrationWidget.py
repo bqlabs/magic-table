@@ -98,7 +98,7 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
 
     def onNextButtonClicked(self):
         # Get current pos and set it on the calibration object
-        current_toohead_pos = (0,0)
+        current_toohead_pos = (self.machine.x, self.machine.y)
         self.calibration.set_current_point_pos(current_toohead_pos)
 
         # Next point
