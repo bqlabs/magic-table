@@ -42,28 +42,26 @@ class Calibration:
                 else:
                     raise Calibration.LoadException("Incorrect calibration file (could not load image)")
 
-    def _parse_xml(self):
-        if not self.xmlcontents:
-            raise Calibration.LoadException('Could not load xml data')
-
-        dom = parseString(self.xmlcontents)
-
-        # Get image (if found)
+    @staticmethod
+    def _extract_image_data(dom):
         try:
             image_node = dom.getElementsByTagName("image")[0]
             try:
                 image_name_node = image_node.getElementsByTagName("name")[0]
                 image_name_text_node = image_name_node.childNodes[0]
                 if image_name_text_node.nodeType == image_name_text_node.TEXT_NODE:
-                    self.image_name = image_name_text_node.data
+                    return image_name_text_node.data
                 else:
                     raise Calibration.LoadException("Image name was not a string")
             except (IndexError, AttributeError) as e:
                 raise Calibration.LoadException("Incorrect calibration file (%s)" % str(e))
         except IndexError:
             pass
+        return None
 
-        # Get calibration points
+    @staticmethod
+    def _extract_point_data(dom):
+        points = []
         point_nodes = dom.getElementsByTagName("point")
         for point_node in point_nodes:
             try:
@@ -77,7 +75,7 @@ class Calibration:
                     raise
 
                 # Get symbol
-                point_symbol_node = point_node.getElementsByTagName("name")[0]
+                point_symbol_node = point_node.getElementsByTagName("symbol")[0]
                 point_symbol_text_node = point_symbol_node.childNodes[0]
                 if point_symbol_text_node.nodeType == point_symbol_text_node.TEXT_NODE:
                     point['symbol'] = point_symbol_text_node.data
@@ -86,14 +84,38 @@ class Calibration:
 
                 # Get point coordinates
                 point_coordinates_node = point_node.getElementsByTagName("coordinates")[0]
-                point['coordinates'] = (float(point_coordinates_node.getAttribute('x')), float(point_coordinates_node.getAttribute('y')))
+                point['coordinates'] = (float(point_coordinates_node.getAttribute('x')), \
+                                        float(point_coordinates_node.getAttribute('y')))
+
+
+                # Try to get real coordinates (for an output calibration file)
+                try:
+                    point_realpos_node = point_node.getElementsByTagName("realpos")[0]
+                    point['realpos'] = (float(point_realpos_node.getAttribute('x')), \
+                                        float(point_realpos_node.getAttribute('y')))
+                except (IndexError, AttributeError) as e:
+                    pass
 
                 # Add point
-                self.points.append(point)
+                points.append(point)
 
             except (IndexError, AttributeError) as e:
                 print str(e)
                 continue
+
+        return points
+
+    def _parse_xml(self):
+        if not self.xmlcontents:
+            raise Calibration.LoadException('Could not load xml data')
+
+        dom = parseString(self.xmlcontents)
+
+        # Get image (if found)
+        self.image_name = Calibration._extract_image_data(dom)
+
+        # Get calibration points
+        self.points = Calibration._extract_point_data(dom)
 
     # Calibration methods stuff
     # ---------------------------------------------------------------------------------------
