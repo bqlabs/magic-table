@@ -101,8 +101,14 @@ def main():
                         elif user.id == int(user_id) and (word == '/say' or word == '/say@'+bot.username):
                             print 'Bot said: \"' + ' '.join(words[i+1:]) + '\"'
                             for character in ' '.join(words[i+1:]).lower():
-                                ouija.go_to(character)
-                                time.sleep(1)
+                                if character == ' ':
+                                    time.sleep(1)
+                                else:
+                                    try:
+                                        ouija.go_to(character)
+                                    except MagicTableController.MagicTableException, e:
+                                        print str(e)
+                                time.sleep(2)
                             break
                         elif user.id == int(user_id) and (word == '/yes' or word == '/yes@'+bot.username):
                             print 'Bot said "yes"'
@@ -117,7 +123,12 @@ def main():
         except (KeyboardInterrupt, SystemExit):
             print '\nkeyboardinterrupt caught (again)'
             print '\n...Program Stopped Manually!'
-            raise
+
+            ouija.toolhead.set_magnet(0, 'off')
+            ouija.toolhead.set_magnet(1, 'off')
+            ouija.disconnect()
+            break
+
 
 if __name__  == '__main__':
     main()
