@@ -1,12 +1,12 @@
 [bot]
-name=Ouija Table
-token=123948162:AAGOMRbvSxS9A9QeZ0acG66DugbaNVVf1rk
+name=<your_bot_name_here>
+token=<your_token_here>
 
 [users]
-allowed=3470608
+allowed=<user_id_goes_here>
 
 [ouija]
-port=/dev/ttyACM0
+port=/dev/ttyUSB0
 baudrate=115200
 magnet1=4
 magnet2=5

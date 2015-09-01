@@ -66,8 +66,8 @@ def main():
 
     # Create OuijaController
     print '[+] Creating OuijaController...'
-    ouija = MagicTableController('../magictable.config')
-    ouija.load_calibration_from_file('../calibration.xml')
+    ouija = MagicTableController('../../magictable.config')
+    ouija.load_calibration_from_file('ouija_points.xml')
     ouija.connect()
     ouija.home()
     ouija.toolhead.set_magnet(0, 'on')
