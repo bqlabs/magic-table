@@ -1,5 +1,6 @@
 from xml.dom.minidom import parseString
 from svg.path import parse_path
+from math import ceil
 
 __author__ = 'def'
 
@@ -37,3 +38,29 @@ class Trajectory:
     def load_paths_from_svg(self, svg_filepath):
         path_strings = self._extract_paths_from_svg(svg_filepath)
         self.paths = [ parse_path(path_str) for path_str in path_strings]
+
+
+    # Path transformations
+    @staticmethod
+    def _discretize(path, segment_len):
+        points = []
+        for element in path:
+            samples = int(ceil(element.length() / segment_len))
+            for i in range(samples):
+                num = element.point(i/samples)
+                points.append( (num.real, num.imag))
+        return points
+
+    @staticmethod
+    def _scale(discrete_path, scale_factor):
+
+        return discrete_path
+
+    @staticmethod
+    def _translate(discrete_path, x_translate, y_translate):
+
+        return discrete_path
+
+    @staticmethod
+    def _bounding_box(discrete_path):
+        pass

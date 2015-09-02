@@ -8,6 +8,7 @@ __author__ = 'def'
 class TrajectoryTest(unittest.TestCase):
 
     svg_filepath = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'data', 'test_python.svg')
+    scaled_svg_filepath = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'data', 'test_scaled_python.svg')
 
     def test_extract_paths_from_svg(self):
         traj = Trajectory()
@@ -20,3 +21,45 @@ class TrajectoryTest(unittest.TestCase):
         traj = Trajectory()
         traj.load_paths_from_svg(self.svg_filepath)
         self.assertEqual(len(traj.paths), 2)
+
+    def test_discretize_path(self):
+        traj = Trajectory()
+        traj.load_paths_from_svg(self.svg_filepath)
+        self.assertEqual(len(traj.paths), 2)
+
+        discrete_traj = traj._discretize(traj.paths[0], 1)
+        self.assertEqual(len(discrete_traj), 377)
+
+        for point in discrete_traj:
+            self.assertEqual(len(point), 2)
+
+    def test_scale_path(self):
+        discrete_traj = [(0,0), (2, 2), (7, 1)]
+        discrete_test_traj = [(0,0), (4, 4), (7,1)]
+
+        scaled_traj = Trajectory._scale(discrete_traj, 2)
+
+        for (x, y) , (test_x, test_y) in zip(scaled_traj, discrete_test_traj):
+            self.assertAlmostEqual(x, test_x, delta=0.01)
+            self.assertAlmostEqual(y, test_y, delta=0.01)
+
+    def test_translate_path(self):
+        discrete_traj = [(0,0), (2, 2), (7, 1)]
+        discrete_test_traj = [(3,3.5), (5, 5.5), (10,4.5)]
+
+        translated_traj = Trajectory._translate(discrete_traj, 3, 3.5)
+
+        for (x, y) , (test_x, test_y) in zip(translated_traj, discrete_test_traj):
+            self.assertAlmostEqual(x, test_x, delta=0.01)
+            self.assertAlmostEqual(y, test_y, delta=0.01)
+
+
+    def test_bounding_box(self):
+        discrete_traj = [(0,0), (2,2), (7,1)]
+        test_bounding_box = [(0,0), (7,1)]
+
+        bounding_box = Trajectory._bounding_box(discrete_traj)
+
+        self.assertEqual(bounding_box, test_bounding_box)
+
+
