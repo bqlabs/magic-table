@@ -1,6 +1,7 @@
 import unittest
 import os
 from Trajectory import Trajectory
+from svg.path import Path, Line
 
 __author__ = 'def'
 
@@ -35,9 +36,9 @@ class TrajectoryTest(unittest.TestCase):
 
     def test_scale_path(self):
         discrete_traj = [(0,0), (2, 2), (7, 1)]
-        discrete_test_traj = [(0,0), (4, 4), (7,1)]
+        discrete_test_traj = [(0,0), (4, 1), (14,0.5)]
 
-        scaled_traj = Trajectory._scale(discrete_traj, 2)
+        scaled_traj = Trajectory._scale(discrete_traj, 2, 0.5)
 
         for (x, y) , (test_x, test_y) in zip(scaled_traj, discrete_test_traj):
             self.assertAlmostEqual(x, test_x, delta=0.01)
@@ -53,13 +54,27 @@ class TrajectoryTest(unittest.TestCase):
             self.assertAlmostEqual(x, test_x, delta=0.01)
             self.assertAlmostEqual(y, test_y, delta=0.01)
 
-
     def test_bounding_box(self):
         discrete_traj = [(0,0), (2,2), (7,1)]
-        test_bounding_box = [(0,0), (7,1)]
+        test_bounding_box = [(0,0), (7,2)]
 
         bounding_box = Trajectory._bounding_box(discrete_traj)
 
         self.assertEqual(bounding_box, test_bounding_box)
 
+    def test_get_path_not_starting_at_0(self):
+        test_path = Path(Line(start=(0+0j), end=(2+2j)),
+                         Line(start=(2+2j), end=(7+1j)),
+                         Line(start=(7+1j), end=(0+0j)))
 
+        expected_result = Trajectory._discretize(Path(Line(start=(2+2j), end=(7+1j)),
+                         Line(start=(7+1j), end=(0+0j)), Line(start=(0+0j), end=(2+2j))), 1)
+
+        traj = Trajectory()
+        traj.paths.append(test_path)
+        result = traj.get_path(0, 1, 1)
+
+        self.assertEqual(result, expected_result)
+
+    def test_get_normalized_path(self):
+        self.fail("Test not implemented")

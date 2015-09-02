@@ -5,12 +5,8 @@ from math import ceil
 __author__ = 'def'
 
 class Trajectory:
-
-    class TrajectoryException(BaseException):
-        pass
-
     def __init__(self):
-        self.paths = None
+        self.paths = []
 
     @staticmethod
     def _extract_paths_from_svg(svg_filepath):
@@ -39,6 +35,14 @@ class Trajectory:
         path_strings = self._extract_paths_from_svg(svg_filepath)
         self.paths = [ parse_path(path_str) for path_str in path_strings]
 
+    def get_path(self, path_index, starting_point_index=0, step=1):
+        path = self.paths[path_index]
+        ordered_path = path[starting_point_index:] + path[0:starting_point_index]
+        return self._discretize(ordered_path, step)
+
+    def get_normalized_path(self, path_index, starting_point_index=0, step=1):
+        pass
+
 
     # Path transformations
     @staticmethod
@@ -52,15 +56,18 @@ class Trajectory:
         return points
 
     @staticmethod
-    def _scale(discrete_path, scale_factor):
-
-        return discrete_path
+    def _scale(discrete_path, scale_factor_x, scale_factor_y):
+        return [(p[0]*scale_factor_x, p[1]*scale_factor_y) for p in discrete_path]
 
     @staticmethod
     def _translate(discrete_path, x_translate, y_translate):
-
-        return discrete_path
+        return [(p[0]+x_translate, p[1]+y_translate) for p in discrete_path]
 
     @staticmethod
     def _bounding_box(discrete_path):
-        pass
+        min_x = min(x for x, y in discrete_path)
+        max_x = max(x for x, y in discrete_path)
+        min_y = min(y for x, y in discrete_path)
+        max_y = max(y for x, y in discrete_path)
+        return [(min_x, min_y), (max_x, max_y)]
+
