@@ -77,4 +77,22 @@ class TrajectoryTest(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_get_normalized_path(self):
-        self.fail("Test not implemented")
+        traj = Trajectory()
+
+        test_path = Path(Line(start=(0+0j), end=(2+2j)),
+                 Line(start=(2+2j), end=(7+1j)),
+                 Line(start=(7+1j), end=(0+0j)))
+
+        expected_path = Trajectory._scale(Trajectory._discretize(Path(Line(start=(0+0j), end=(2+2j)),
+                                                    Line(start=(2+2j), end=(7+1j)),
+                                                    Line(start=(7+1j), end=(0+0j))), 1),
+                                          1/7.0, 1/2.0)
+
+
+        traj.paths.append(test_path)
+        normalized_trajectory = traj.get_normalized_path(0)
+
+        for (x1, y1), (x2, y2) in zip(normalized_trajectory, expected_path):
+            self.assertAlmostEqual(x1, x2, delta=0.01)
+            self.assertAlmostEqual(y1, y2, delta=0.01)
+

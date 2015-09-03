@@ -41,8 +41,11 @@ class Trajectory:
         return self._discretize(ordered_path, step)
 
     def get_normalized_path(self, path_index, starting_point_index=0, step=1):
-        pass
-
+        """Step is applied before normalizing"""
+        discrete_path = self.get_path(path_index, starting_point_index, step)
+        bounding_box = self._bounding_box(discrete_path)
+        return self._scale(discrete_path, 1/float(bounding_box[1][0]-bounding_box[0][0]),
+                                          1/float(bounding_box[1][1]-bounding_box[0][1]))
 
     # Path transformations
     @staticmethod
