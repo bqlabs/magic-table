@@ -5,6 +5,7 @@ import sys, os
 from ControllerGUI import ControllerGUI
 from CalibrationWidget import CalibrationWidget
 from Calibration import Calibration
+from TrajectoryWidget import TrajectoryWidget
 
 __author__ = 'def'
 
@@ -37,12 +38,21 @@ class MagicTableMainWindow(QtGui.QWidget):
         self.calibrationButton.toggled.connect(self.onCalibrationButtonEnabled)
         self.buttonLayout.addWidget(self.calibrationButton)
 
+        # Add path workspace button
+        self.trajectoryWidget = None
+        self.trajectoryButton = QtGui.QPushButton('path')
+        self.trajectoryButton.setGeometry(0, 0, 64, 64)
+        self.trajectoryButton.setCheckable(True)
+        self.trajectoryButton.toggled.connect(self.onTrajectoryButtonEnabled)
+        self.buttonLayout.addWidget(self.trajectoryButton)
+
         # Add buttons to layout
         self.buttonLayout.addStretch(1)
         self.layout().addLayout(self.buttonLayout)
 
         # Add calibration workspace
         self.initCalibration()
+        self.initTrajectory()
 
     def initCalibration(self):
         # Create calibration widget
@@ -52,7 +62,6 @@ class MagicTableMainWindow(QtGui.QWidget):
         self.onCalibrationButtonDisabled()
 
     def onCalibrationButtonEnabled(self, checked):
-
         if not checked:
             return self.onCalibrationButtonDisabled()
 
@@ -63,12 +72,28 @@ class MagicTableMainWindow(QtGui.QWidget):
         self.calibrationWidget.abort()
         self.adjustSize()
 
+    def initTrajectory(self):
+        # Create trajectory widget
+        self.trajectoryWidget = TrajectoryWidget(None, self.machine)
+        self.layout().addWidget(self.trajectoryWidget)
+        self.onTrajectoryButtonDisabled()
+
+    def onTrajectoryButtonEnabled(self, checked):
+        if not checked:
+            return self.onTrajectoryButtonDisabled()
+        self.trajectoryWidget.start()
+
+    def onTrajectoryButtonDisabled(self):
+        self.trajectoryWidget.abort()
+        self.adjustSize()
+
     def closeEvent(self, event):
         try:
             if self.machine:
                 self.machine.disconnect()
             event.accept()
-        except:
+        except CoreXY.ConnectException, e:
+            print str(e)
             event.ignore()
 
 

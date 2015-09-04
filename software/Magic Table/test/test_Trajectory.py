@@ -92,6 +92,8 @@ class TrajectoryTest(unittest.TestCase):
         traj.paths.append(test_path)
         normalized_trajectory = traj.get_normalized_path(0)
 
+        self.assertGreater(len(normalized_trajectory), 3)
+
         for (x1, y1), (x2, y2) in zip(normalized_trajectory, expected_path):
             self.assertAlmostEqual(x1, x2, delta=0.01)
             self.assertAlmostEqual(y1, y2, delta=0.01)

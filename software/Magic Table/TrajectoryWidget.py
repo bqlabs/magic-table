@@ -134,12 +134,14 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
             current_trajectory = self._currentComboBoxIndex(self.trajectoryComboBox)
             current_starting_point = self._currentComboBoxIndex(self.indexComboBox)
             step = self.stepSpinBox.value()
+            print "Step: %f" % step
             x_scale, y_scale = self.xScaleSpinBox.value(), self.yScaleSpinBox.value()
             x_offset, y_offset = self.xOffsetSpinBox.value(), self.yOffsetSpinBox.value()
 
             # Transform trajectory
             try:
                 discrete_trajectory = self.trajectory.get_normalized_path(current_trajectory, current_starting_point, step)
+                print "Path length: %d points" % len(discrete_trajectory)
                 discrete_trajectory = self.trajectory._scale(discrete_trajectory, 480*x_scale, 339*y_scale)
                 discrete_trajectory = self.trajectory._translate(discrete_trajectory, x_offset, y_offset)
             except ArithmeticError, e:
@@ -259,6 +261,21 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
             self.machine.disconnect()
         event.accept()
 
+    # MagicTable widget interface
+    def start(self):
+        self.show()
+
+    def abort(self):
+        if self.parent():
+            self.hide()
+            try:
+                self.parent().adjustSize()
+                self.parent().trajectoryButton.setChecked(False)
+            except AttributeError, e:
+                print str(e)
+        else:
+            self.close()
+
 if __name__ == '__main__':
     from TrajectoryController import TrajectoryController
     from CoreXY import CoreXY
@@ -271,5 +288,5 @@ if __name__ == '__main__':
     tool = SimpleMagnetToolhead(4,5)
     cxy.set_toolhead(tool)
     gui = TrajectoryWidget(None, cxy)
-    gui.show()
+    gui.start()
     sys.exit(app.exec_())
