@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--Magic Table Calibration file-->
+<calibration>
+    <image>
+        <name>Circuit.jpg</name>
+    </image>
+    <point>
+        <name>Upper Left Limit</name>
+        <symbol>upper_left_limit</symbol>
+        <coordinates x="0" y="0"></coordinates>
+    </point>
+    <point>
+        <name>Lower Right Limit</name>
+        <symbol>lower_right_limit</symbol>
+        <coordinates x="842" y="595"></coordinates>
+    </point>
+</calibration>
