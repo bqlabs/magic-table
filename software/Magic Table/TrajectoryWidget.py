@@ -134,7 +134,6 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
             current_trajectory = self._currentComboBoxIndex(self.trajectoryComboBox)
             current_starting_point = self._currentComboBoxIndex(self.indexComboBox)
             step = self.stepSpinBox.value()
-            print "Step: %f" % step
             x_scale, y_scale = self.xScaleSpinBox.value(), self.yScaleSpinBox.value()
             x_offset, y_offset = self.xOffsetSpinBox.value(), self.yOffsetSpinBox.value()
 
