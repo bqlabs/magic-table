@@ -52,8 +52,8 @@ class Trajectory:
     def _discretize(path, segment_len):
         points = []
         for element in path:
-            samples = int(ceil(element.length() / segment_len))
-            for i in range(samples):
+            samples = ceil(element.length() / float(segment_len))
+            for i in range(int(samples)):
                 num = element.point(i/samples)
                 points.append( (num.real, num.imag))
         return points

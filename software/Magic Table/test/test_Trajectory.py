@@ -76,6 +76,18 @@ class TrajectoryTest(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
+    def test_path_is_homogeneously_sampled(self):
+        test_path = Path(Line(start=(0+0j), end=(5+0j)))
+        expected_result = [(0,0), (1,0), (2,0), (3,0), (4,0), (5,0)]
+
+        traj = Trajectory()
+        traj.paths.append(test_path)
+        result = traj.get_path(0, 0, 1)
+
+        for (x1, y1), (x2, y2) in zip(result, expected_result):
+            self.assertAlmostEqual(x1, x2, delta=0.01)
+            self.assertAlmostEqual(y1, y2, delta=0.01)
+
     def test_get_normalized_path(self):
         traj = Trajectory()
 
