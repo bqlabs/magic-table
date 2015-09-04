@@ -139,6 +139,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="stepSpinBox">
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
            <property name="value">
             <double>1.000000000000000</double>
            </property>
@@ -163,6 +166,9 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="xScaleSpinBox">
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
               <property name="value">
                <double>1.000000000000000</double>
               </property>
@@ -181,6 +187,9 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="yScaleSpinBox">
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
               <property name="value">
                <double>1.000000000000000</double>
               </property>
@@ -207,7 +216,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="xOffsetSpinBox"/>
+             <widget class="QDoubleSpinBox" name="xOffsetSpinBox">
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -221,7 +234,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="yOffsetSpinBox"/>
+             <widget class="QDoubleSpinBox" name="yOffsetSpinBox">
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

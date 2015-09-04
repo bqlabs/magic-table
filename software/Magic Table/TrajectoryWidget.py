@@ -4,6 +4,7 @@ import sys, os
 from CoreXY import CoreXY
 from CoreXYEventListener import CoreXYEventListener
 from Calibration import Calibration
+from Trajectory import Trajectory
 
 __author__ = 'def'
 
@@ -12,6 +13,7 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         super(TrajectoryWidget, self).__init__()
         self.machine = machine
         self.machine.add_listener(self)
+        self.trajectory = Trajectory()
 
 
         # References to widgets
@@ -30,6 +32,10 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         self.yOffsetSpinBox = None
         self.stopButton = None
         self.runButton = None
+
+        # Image-related
+        self.pixmap = QtGui.QPixmap()
+        self.original_rect = None
 
         self.loadUI()
         self.update()
@@ -59,6 +65,19 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         self.xOffsetSpinBox = self.findChild(QtGui.QDoubleSpinBox, "xOffsetSpinBox")
         self.yOffsetSpinBox = self.findChild(QtGui.QDoubleSpinBox, "yOffsetSpinBox")
 
+        # Set spinBox limits:
+        float_max = sys.float_info.max
+        self.stepSpinBox.setMaximum(float_max)
+        self.xScaleSpinBox.setMaximum(float_max)
+        self.yScaleSpinBox.setMaximum(float_max)
+        self.xOffsetSpinBox.setMaximum(float_max)
+        self.yOffsetSpinBox.setMaximum(float_max)
+        self.stepSpinBox.setMinimum(0)
+        self.xScaleSpinBox.setMinimum(0)
+        self.yScaleSpinBox.setMinimum(0)
+        self.xOffsetSpinBox.setMinimum(-float_max)
+        self.yOffsetSpinBox.setMinimum(-float_max)
+
         # Connect signals
         self.calibrationFileButton.clicked.connect(self.onCalibrationButtonClicked)
         self.pointsFileButton.clicked.connect(self.onPointsButtonClicked)
@@ -77,10 +96,77 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         self.setTrajectoryControlsEnabled(False)
 
     def update(self):
-        pass
+        self.updateImage()
+
+    def resetInputValues(self):
+        self.stepSpinBox.setValue(1)
+        self.xOffsetSpinBox.setValue(0)
+        self.yOffsetSpinBox.setValue(0)
+        self.xScaleSpinBox.setValue(1)
+        self.yScaleSpinBox.setValue(1)
+
+    @staticmethod
+    def _currentComboBoxIndex(combobox):
+        try:
+            return combobox.findText(combobox.currentText())
+        except (IndexError, AttributeError) as e:
+            print str(e)
+            return None
+
+
+    def loadImage(self, calibration):
+        if calibration.image_name:
+            self.pixmap.loadFromData(calibration.image, os.path.splitext(calibration.image_name)[1])
+            self.original_rect = self.pixmap.rect()
+            self.pixmap = self.pixmap.scaled(480, 339)
+            return True
+        else:
+            return False
 
     def updateImage(self):
-        print "Updating image..."
+        # Load image and create scene
+        scene = QtGui.QGraphicsScene()
+        scene.addItem(QtGui.QGraphicsPixmapItem(self.pixmap))
+
+        # Draw markers and trajectory if needed
+        if self.trajectoryComboBox.currentText():
+            # Get data from form
+            current_trajectory = self._currentComboBoxIndex(self.trajectoryComboBox)
+            current_starting_point = self._currentComboBoxIndex(self.indexComboBox)
+            step = self.stepSpinBox.value()
+            x_scale, y_scale = self.xScaleSpinBox.value(), self.yScaleSpinBox.value()
+            x_offset, y_offset = self.xOffsetSpinBox.value(), self.yOffsetSpinBox.value()
+
+            # Transform trajectory
+            try:
+                discrete_trajectory = self.trajectory.get_normalized_path(current_trajectory, current_starting_point, step)
+                discrete_trajectory = self.trajectory._scale(discrete_trajectory, 480*x_scale, 339*y_scale)
+                discrete_trajectory = self.trajectory._translate(discrete_trajectory, x_offset, y_offset)
+            except ArithmeticError, e:
+                print e
+                return False
+
+            # Draw lines
+            red_thin_pen = QtGui.QPen(QtGui.QColor(255, 0, 0))
+            red_thin_pen.setWidth(1)
+            for start, end in zip([discrete_trajectory[-1]]+discrete_trajectory[:-1], discrete_trajectory[1:]):
+                scene.addLine(start[0], start[1], end[0], end[1], pen=red_thin_pen)
+
+            # Draw starting point
+            green_pen = QtGui.QPen(QtGui.QColor(0, 255, 0))
+            green_pen.setWidth(2)
+            scene.addEllipse(int(discrete_trajectory[0][0]-2), int(discrete_trajectory[0][1]-2), 4, 4,
+                                     pen=green_pen)
+
+            # Draw the rest of the points
+            red_thick_pen = QtGui.QPen(QtGui.QColor(255, 0, 0))
+            red_thick_pen.setWidth(2)
+            for point in discrete_trajectory[1:]:
+                scene.addEllipse(int(point[0]-1), int(point[1]-1), 2, 2,
+                                     pen=red_thick_pen)
+
+        self.graphicsView.setScene(scene)
+        self.graphicsView.show()
 
     def onCalibrationButtonClicked(self):
         # Ask the user for a file
@@ -101,12 +187,32 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         points_filename = self.pointsFileLineEdit.text()
 
         if calibration_filename and points_filename:
-            try:
-                # Load data from files
+            # Ask the user for a file
+            filename, ext = QtGui.QFileDialog.getOpenFileName(None, "Select SVG file", filter='*.svg' )
 
-                self.setTrajectoryControlsEnabled(True)
-            except TrajectoryController.TrajectoryException, e:
-                pass
+            if filename:
+                try:
+                    # Load image data from calibration file
+                    calibration = Calibration()
+                    calibration.load_zipfile(calibration_filename)
+                    self.loadImage(calibration)
+                except Calibration.LoadException, e:
+                    QtGui.QMessageBox().critical(self, 'Error', 'Calibration file not compatible!')
+                    return False
+
+                try:
+                    # Load data from files
+                    self.trajectory.load_paths_from_svg(filename)
+
+                    # Set trajectories on controls
+                    trajectory_choices = [ "Trajectory #%d" % i for i, path in enumerate(self.trajectory.paths)]
+                    self.trajectoryComboBox.clear()
+                    self.trajectoryComboBox.addItems(trajectory_choices)
+                    self.setTrajectoryControlsEnabled(True)
+
+                    self.update()
+                except TrajectoryController.TrajectoryException, e:
+                    pass
 
     def onStopButtonClicked(self):
         print "Stop button clicked"
@@ -115,7 +221,13 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         print "Run button clicked"
 
     def onTrajectorySelectedChanged(self):
-        print "Trajectory Selected Changed"
+        current_traj_choice = self._currentComboBoxIndex(self.trajectoryComboBox)
+        start_point_choices = ["Point #%d" % i for i, element in \
+                               enumerate(self.trajectory.paths[current_traj_choice])]
+        self.indexComboBox.clear()
+        self.indexComboBox.addItems(start_point_choices)
+
+        self.resetInputValues()
 
     def setTrajectoryControlsEnabled(self, state):
         self.graphicsView.setEnabled(state)
