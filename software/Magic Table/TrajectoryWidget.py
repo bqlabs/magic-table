@@ -1,6 +1,7 @@
 from PySide import QtCore, QtGui
 from UtilsGUI import load_ui
 import sys, os
+import time
 from CoreXY import CoreXY
 from CoreXYEventListener import CoreXYEventListener
 from Calibration import Calibration
@@ -14,6 +15,7 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         self.machine = machine
         self.machine.add_listener(self)
         self.trajectory = Trajectory()
+        self.limits = None
 
 
         # References to widgets
@@ -123,13 +125,7 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         else:
             return False
 
-    def updateImage(self):
-        # Load image and create scene
-        scene = QtGui.QGraphicsScene()
-        scene.addItem(QtGui.QGraphicsPixmapItem(self.pixmap))
-
-        # Draw markers and trajectory if needed
-        if self.trajectoryComboBox.currentText():
+    def calculateTrajectoryFromParams(self):
             # Get data from form
             current_trajectory = self._currentComboBoxIndex(self.trajectoryComboBox)
             current_starting_point = self._currentComboBoxIndex(self.indexComboBox)
@@ -146,6 +142,17 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
             except ArithmeticError, e:
                 print e
                 return False
+
+            return discrete_trajectory
+
+    def updateImage(self):
+        # Load image and create scene
+        scene = QtGui.QGraphicsScene()
+        scene.addItem(QtGui.QGraphicsPixmapItem(self.pixmap))
+
+        # Draw markers and trajectory if needed
+        if self.trajectoryComboBox.currentText():
+            discrete_trajectory = self.calculateTrajectoryFromParams()
 
             # Draw lines
             red_thin_pen = QtGui.QPen(QtGui.QColor(255, 0, 0))
@@ -202,6 +209,13 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
                     return False
 
                 try:
+                    # Load points data from points file
+                    self.limits = Calibration.load_calibration_file(points_filename)
+                except Calibration.LoadException, e:
+                    QtGui.QMessageBox().critical(self, 'Error', 'Points file not compatible!')
+                    return False
+
+                try:
                     # Load data from files
                     self.trajectory.load_paths_from_svg(filename)
 
@@ -220,6 +234,12 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
 
     def onRunButtonClicked(self):
         print "Run button clicked"
+        self.runButton.setEnabled(False)
+
+        points = self.trajectory._scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
+        TrajectoryController.followTrajectory(points, self.machine, self.limits)
+
+        self.runButton.setEnabled(True)
 
     def onTrajectorySelectedChanged(self):
         current_traj_choice = self._currentComboBoxIndex(self.trajectoryComboBox)
@@ -257,6 +277,9 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
     # Widget events
     def closeEvent(self, event):
         if self.machine:
+            if self.machine.toolhead:
+                self.machine.toolhead.set_magnet(0, 'off')
+                self.machine.toolhead.set_magnet(1, 'off')
             self.machine.disconnect()
         event.accept()
 
@@ -286,6 +309,10 @@ if __name__ == '__main__':
     cxy = CoreXY()
     tool = SimpleMagnetToolhead(4,5)
     cxy.set_toolhead(tool)
+    cxy.connect()
+    cxy.home()
+    cxy.toolhead.set_magnet(0, 'on')
+    cxy.toolhead.set_magnet(1, 'on')
     gui = TrajectoryWidget(None, cxy)
     gui.start()
     sys.exit(app.exec_())
