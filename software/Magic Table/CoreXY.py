@@ -91,7 +91,7 @@ class CoreXY(object):
             for listener in self.listeners:
                 listener.on_move(self.x, self.y)
         else:
-            raise AttributeError("Coordinates (%.2f, .2f) out of limits (%.2f, %.2f)"%(x, y, self.x_limit, self.y_limit))
+            raise AttributeError("Coordinates (%.2f, %.2f) out of limits (%.2f, %.2f)"%(x, y, self.x_limit, self.y_limit))
 
     @staticmethod
     def clip(value, min, max):
