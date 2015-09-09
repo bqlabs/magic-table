@@ -1,11 +1,11 @@
 from PySide import QtCore, QtGui
 from UtilsGUI import load_ui
 import sys, os
-import time
 from CoreXY import CoreXY
 from CoreXYEventListener import CoreXYEventListener
 from Calibration import Calibration
 from Trajectory import Trajectory
+from TrajectoryController import TrajectoryController
 
 __author__ = 'def'
 
