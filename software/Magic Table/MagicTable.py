@@ -48,7 +48,12 @@ class MagicTableMainWindow(QtGui.QWidget):
 
         # Add buttons to layout
         self.buttonLayout.addStretch(1)
-        self.layout().addLayout(self.buttonLayout)
+        button_widget = QtGui.QFrame(None, QtGui.QFrame.Box )
+        button_widget.setLayout(self.buttonLayout)
+        button_widget.setLineWidth(1)
+        button_widget.setFrameShape(QtGui.QFrame.Box)
+        button_widget.setFrameShadow(QtGui.QFrame.Sunken)
+        self.layout().addWidget(button_widget)
 
         # Add calibration workspace
         self.initCalibration()
