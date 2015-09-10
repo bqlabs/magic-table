@@ -7,11 +7,12 @@ sys.path.append(pronterface_path)
 
 from printrun.printcore import printcore
 from CoreXYEventListener import CoreXYEventListener
+from CoreXYEventObservable import CoreXYEventObservable
 
 __author__ = 'def'
 
 
-class CoreXY(object):
+class CoreXY(CoreXYEventObservable):
     """ Basic class to control a CoreXY with Marlin Firmware """
 
     class ConnectException(BaseException):
@@ -23,6 +24,7 @@ class CoreXY(object):
     home_cmd = "G28 Y0\nG28 X0\n"
 
     def __init__(self, port = '/dev/ttyACM0', baudrate = 115200):
+        super(CoreXY, self).__init__()
         self.port = port
         self.baudrate = baudrate
         self.comm = printcore()
@@ -32,16 +34,13 @@ class CoreXY(object):
 
         self.toolhead = None
 
-        self.listeners = []
-
     # Basic functionality (provided by the communications interface)
     def connect(self):
         if not self.comm.online:
             self.comm.connect(self.port, self.baudrate)
             time.sleep(2)
             if self.comm.online:
-                for listener in self.listeners:
-                    listener.on_connect()
+                self._notify_listeners("connect")
                 return True
             else:
                 raise CoreXY.ConnectException('Could not connect to the device')
@@ -51,8 +50,7 @@ class CoreXY(object):
             self.comm.disconnect()
             time.sleep(2)
             if not self.comm.online:
-                for listener in self.listeners:
-                    listener.on_disconnect()
+                self._notify_listeners("disconnect")
                 return True
             else:
                 raise CoreXY.ConnectException('Could not disconnect from the device')
@@ -80,16 +78,14 @@ class CoreXY(object):
     def home(self):
         self.comm.send(self.home_cmd)
         self.x, self.y = 0, 0
-        for listener in self.listeners:
-            listener.on_home()
+        self._notify_listeners("home")
         return True
 
     def move(self, x, y, speed=None):
         if 0 <= x <= self.x_limit and 0 <= y <= self.y_limit:
             self.comm.send("G1 F6000 X%s Y%s\n" % (x, y))
             self.x, self.y = x, y
-            for listener in self.listeners:
-                listener.on_move(self.x, self.y)
+            self._notify_listeners("move", self.x, self.y)
         else:
             raise AttributeError("Coordinates (%.2f, %.2f) out of limits (%.2f, %.2f)"%(x, y, self.x_limit, self.y_limit))
 
@@ -109,17 +105,12 @@ class CoreXY(object):
         self.comm.send("G1 F6000 X%s Y%s\n" % (new_x, new_y))
         self.x, self.y = new_x, new_y
 
-        for listener in self.listeners:
-            listener.on_move(self.x, self.y)
+        self._notify_listeners("move", self.x, self.y)
 
     # Toolhead functions
     def set_toolhead(self, toolhead):
         self.toolhead = toolhead
         self.toolhead._set_comm_interface(self.comm)
-
-    # Listener functions
-    def add_listener(self, listener):
-        self.listeners.append(listener)
 
 
 if __name__ == '__main__':
