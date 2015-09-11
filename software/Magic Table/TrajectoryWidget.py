@@ -137,8 +137,8 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
             try:
                 discrete_trajectory = self.trajectory.get_normalized_path(current_trajectory, current_starting_point, step)
                 print "Path length: %d points" % len(discrete_trajectory)
-                discrete_trajectory = self.trajectory._scale(discrete_trajectory, 480*x_scale, 339*y_scale)
-                discrete_trajectory = self.trajectory._translate(discrete_trajectory, x_offset, y_offset)
+                discrete_trajectory = self.trajectory.scale(discrete_trajectory, 480*x_scale, 339*y_scale)
+                discrete_trajectory = self.trajectory.translate(discrete_trajectory, x_offset, y_offset)
             except ArithmeticError, e:
                 print e
                 return False
@@ -236,7 +236,7 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         print "Run button clicked"
         self.runButton.setEnabled(False)
 
-        points = self.trajectory._scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
+        points = self.trajectory.scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
         TrajectoryController.followTrajectory(points, self.machine, self.limits)
 
         self.runButton.setEnabled(True)

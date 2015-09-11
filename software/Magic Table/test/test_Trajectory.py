@@ -28,7 +28,7 @@ class TrajectoryTest(unittest.TestCase):
         traj.load_paths_from_svg(self.svg_filepath)
         self.assertEqual(len(traj.paths), 2)
 
-        discrete_traj = traj._discretize(traj.paths[0], 1)
+        discrete_traj = traj.discretize(traj.paths[0], 1)
         self.assertEqual(len(discrete_traj), 377)
 
         for point in discrete_traj:
@@ -38,7 +38,7 @@ class TrajectoryTest(unittest.TestCase):
         discrete_traj = [(0,0), (2, 2), (7, 1)]
         discrete_test_traj = [(0,0), (4, 1), (14,0.5)]
 
-        scaled_traj = Trajectory._scale(discrete_traj, 2, 0.5)
+        scaled_traj = Trajectory.scale(discrete_traj, 2, 0.5)
 
         for (x, y) , (test_x, test_y) in zip(scaled_traj, discrete_test_traj):
             self.assertAlmostEqual(x, test_x, delta=0.01)
@@ -48,7 +48,7 @@ class TrajectoryTest(unittest.TestCase):
         discrete_traj = [(0,0), (2, 2), (7, 1)]
         discrete_test_traj = [(3,3.5), (5, 5.5), (10,4.5)]
 
-        translated_traj = Trajectory._translate(discrete_traj, 3, 3.5)
+        translated_traj = Trajectory.translate(discrete_traj, 3, 3.5)
 
         for (x, y) , (test_x, test_y) in zip(translated_traj, discrete_test_traj):
             self.assertAlmostEqual(x, test_x, delta=0.01)
@@ -58,7 +58,7 @@ class TrajectoryTest(unittest.TestCase):
         discrete_traj = [(0,0), (2,2), (7,1)]
         test_bounding_box = [(0,0), (7,2)]
 
-        bounding_box = Trajectory._bounding_box(discrete_traj)
+        bounding_box = Trajectory.bounding_box(discrete_traj)
 
         self.assertEqual(bounding_box, test_bounding_box)
 
@@ -67,7 +67,7 @@ class TrajectoryTest(unittest.TestCase):
                          Line(start=(2+2j), end=(7+1j)),
                          Line(start=(7+1j), end=(0+0j)))
 
-        expected_result = Trajectory._discretize(Path(Line(start=(2+2j), end=(7+1j)),
+        expected_result = Trajectory.discretize(Path(Line(start=(2+2j), end=(7+1j)),
                          Line(start=(7+1j), end=(0+0j)), Line(start=(0+0j), end=(2+2j))), 1)
 
         traj = Trajectory()
@@ -95,7 +95,7 @@ class TrajectoryTest(unittest.TestCase):
                  Line(start=(2+2j), end=(7+1j)),
                  Line(start=(7+1j), end=(0+0j)))
 
-        expected_path = Trajectory._scale(Trajectory._discretize(Path(Line(start=(0+0j), end=(2+2j)),
+        expected_path = Trajectory.scale(Trajectory.discretize(Path(Line(start=(0+0j), end=(2+2j)),
                                                     Line(start=(2+2j), end=(7+1j)),
                                                     Line(start=(7+1j), end=(0+0j))), 1),
                                           1/7.0, 1/2.0)

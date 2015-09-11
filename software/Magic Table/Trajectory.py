@@ -38,18 +38,18 @@ class Trajectory:
     def get_path(self, path_index, starting_point_index=0, step=1):
         path = self.paths[path_index]
         ordered_path = path[starting_point_index:] + path[0:starting_point_index]
-        return self._discretize(ordered_path, step)
+        return self.discretize(ordered_path, step)
 
     def get_normalized_path(self, path_index, starting_point_index=0, step=1):
         """Step is applied before normalizing"""
         discrete_path = self.get_path(path_index, starting_point_index, step)
-        bounding_box = self._bounding_box(discrete_path)
-        return self._scale(discrete_path, 1/float(bounding_box[1][0]-bounding_box[0][0]),
+        bounding_box = self.bounding_box(discrete_path)
+        return self.scale(discrete_path, 1/float(bounding_box[1][0]-bounding_box[0][0]),
                                           1/float(bounding_box[1][1]-bounding_box[0][1]))
 
     # Path transformations
     @staticmethod
-    def _discretize(path, segment_len):
+    def discretize(path, segment_len):
         points = []
         for element in path:
             samples = ceil(element.length() / float(segment_len))
@@ -59,15 +59,15 @@ class Trajectory:
         return points
 
     @staticmethod
-    def _scale(discrete_path, scale_factor_x, scale_factor_y):
+    def scale(discrete_path, scale_factor_x, scale_factor_y):
         return [(p[0]*scale_factor_x, p[1]*scale_factor_y) for p in discrete_path]
 
     @staticmethod
-    def _translate(discrete_path, x_translate, y_translate):
+    def translate(discrete_path, x_translate, y_translate):
         return [(p[0]+x_translate, p[1]+y_translate) for p in discrete_path]
 
     @staticmethod
-    def _bounding_box(discrete_path):
+    def bounding_box(discrete_path):
         min_x = min(x for x, y in discrete_path)
         max_x = max(x for x, y in discrete_path)
         min_y = min(y for x, y in discrete_path)
