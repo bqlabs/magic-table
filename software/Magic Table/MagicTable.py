@@ -61,6 +61,11 @@ class MagicTableMainWindow(QtGui.QWidget):
         if not checked:
             return self.onWorkspaceButtonDisabled(workspace)
 
+        # Check if any of the other buttons is checked:
+        for name, data in self.workspaces.iteritems():
+            if name != workspace and data['button'].isChecked():
+                data['widget'].pause()
+
         if not self.workspaces[workspace]['widget'].start():
             self.workspaces[workspace]['button'].setChecked(False)
 
