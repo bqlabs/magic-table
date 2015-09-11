@@ -43,8 +43,8 @@ class SimpleMagnetToolhead:
             raise AttributeError('Error: Toolhead not attached to CoreXY yet.')
 
     def set_magnets_off(self):
-        for magnet in self.magnets:
-            self.set_magnet(magnet, 'off')
+        for i, magnet in enumerate(self.magnets):
+            self.set_magnet(i, 'off')
 
     def _set_comm_interface(self, interface):
         self.comm = interface
