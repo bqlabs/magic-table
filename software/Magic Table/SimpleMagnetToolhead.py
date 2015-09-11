@@ -37,10 +37,14 @@ class SimpleMagnetToolhead:
             self.magnets[id]['status'] = status
 
         except IndexError:
-            raise Exception('Error: magnet %d is not attached to toolhead yet.' % id)
+            raise IndexError('Error: magnet %d is not attached to toolhead yet.' % id)
         except AttributeError, e:
             print str(e)
-            raise Exception('Error: Toolhead not attached to CoreXY yet.')
+            raise AttributeError('Error: Toolhead not attached to CoreXY yet.')
+
+    def set_magnets_off(self):
+        for magnet in self.magnets:
+            self.set_magnet(magnet, 'off')
 
     def _set_comm_interface(self, interface):
         self.comm = interface
