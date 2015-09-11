@@ -6,13 +6,16 @@ from CoreXYEventListener import CoreXYEventListener
 from Calibration import Calibration
 from Trajectory import Trajectory
 from TrajectoryController import TrajectoryController
+from WorkspaceWidget import WorkspaceWidget
 
 __author__ = 'def'
 
-class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
+class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
     def __init__(self, parent, machine):
-        super(TrajectoryWidget, self).__init__()
-        self.machine = machine
+        super(TrajectoryWidget, self).__init__(parent, machine)
+        self.name = "TrajectoryWidget"
+        self.icon = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'resources', 'icons', 'format-text-direction-ltr.png')
+        self.tooltip = "Trajectory workspace"
         self.machine.add_listener(self)
         self.trajectory = Trajectory()
         self.limits = None
@@ -266,37 +269,14 @@ class TrajectoryWidget(QtGui.QWidget, CoreXYEventListener):
         pass
 
     def on_disconnect(self):
-        pass
+        self.runButton.setEnabled(False)
 
     def on_home(self):
-        pass
+        self.runButton.setEnabled(True)
 
     def on_move(self, x, y):
         pass
 
-    # Widget events
-    def closeEvent(self, event):
-        if self.machine:
-            if self.machine.toolhead:
-                self.machine.toolhead.set_magnet(0, 'off')
-                self.machine.toolhead.set_magnet(1, 'off')
-            self.machine.disconnect()
-        event.accept()
-
-    # MagicTable widget interface
-    def start(self):
-        self.show()
-
-    def abort(self):
-        if self.parent():
-            self.hide()
-            try:
-                self.parent().adjustSize()
-                self.parent().trajectoryButton.setChecked(False)
-            except AttributeError, e:
-                print str(e)
-        else:
-            self.close()
 
 if __name__ == '__main__':
     from TrajectoryController import TrajectoryController

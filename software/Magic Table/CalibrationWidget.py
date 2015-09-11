@@ -4,15 +4,19 @@ import sys, os
 from Calibration import Calibration
 from CoreXY import CoreXY
 from CoreXYEventListener import CoreXYEventListener
+from Calibration import Calibration
+from WorkspaceWidget import WorkspaceWidget
 
 __author__ = 'def'
 
 
-class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
-    def __init__(self, parent, calibration, machine):
-        super(CalibrationWidget, self).__init__()
-        self.calibration = calibration
-        self.machine = machine
+class CalibrationWidget(WorkspaceWidget, CoreXYEventListener):
+    def __init__(self, parent, machine):
+        super(CalibrationWidget, self).__init__(parent, machine)
+        self.name = "CalibrationWidget"
+        self.icon = os.path.join(os.path.realpath(os.path.dirname(__file__)), 'resources', 'icons', 'document-properties.png')
+        self.tooltip = "Calibration workspace"
+        self.calibration = None
         self.machine.add_listener(self)
 
         self.nextButton = None
@@ -65,6 +69,7 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
         if filename:
             # Try to open the calibration file
             try:
+                self.calibration = Calibration()
                 self.calibration.load_zipfile(filename)
                 self.calibration.start()
                 self.loadImage()
@@ -83,18 +88,10 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
     def abort(self):
         try:
             self.calibration.abort()
-        except Calibration.CalibrationException, e:
+        except (AttributeError, Calibration.CalibrationException) as e:
             print str(e)
 
-        if self.parent():
-            self.hide()
-            try:
-                self.parent().adjustSize()
-                self.parent().calibrationButton.setChecked(False)
-            except AttributeError, e:
-                print str(e)
-        else:
-            self.close()
+        super(CalibrationWidget, self).abort()
 
     def onNextButtonClicked(self):
         # Get current pos and set it on the calibration object
@@ -130,7 +127,7 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
             current_point = self.calibration.get_current_point_data()
             self.targetPointLabel.setText('Target point: %s' % current_point['name'])
             self.targetImageLabel.setText('Target image coordinates: (%.2f, %.2f)'%current_point['coordinates'])
-        except Calibration.CalibrationException, e:
+        except (AttributeError, Calibration.CalibrationException) as e:
             self.targetPointLabel.setText('Target point: "Point"')
             self.targetImageLabel.setText('Target image coordinates: (u, v)')
 
@@ -145,14 +142,13 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
         else:
             return False
 
-
     def updateImage(self):
         # Load image and create scene
         scene = QtGui.QGraphicsScene()
         scene.addItem(QtGui.QGraphicsPixmapItem(self.pixmap))
 
         # Draw markers
-        if self.calibration.calibrating:
+        if self.calibration and self.calibration.calibrating:
             current_point = self.calibration.get_current_point_data()['coordinates']
             scale_x = 480 / float(self.original_rect.width())
             scale_y = 339 / float(self.original_rect.height())
@@ -188,16 +184,14 @@ class CalibrationWidget(QtGui.QWidget, CoreXYEventListener):
 
 
 if __name__ == '__main__':
-    from Calibration import Calibration
     from CoreXY import CoreXY
     from SimpleMagnetToolhead import SimpleMagnetToolhead
 
     app = QtGui.QApplication(sys.argv)
 
-    calibration = Calibration()
     cxy = CoreXY()
     tool = SimpleMagnetToolhead(4,5)
     cxy.set_toolhead(tool)
-    gui = CalibrationWidget(None, calibration, cxy)
+    gui = CalibrationWidget(None, cxy)
     gui.start()
     sys.exit(app.exec_())

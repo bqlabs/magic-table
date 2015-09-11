@@ -28,68 +28,44 @@ class MagicTableMainWindow(QtGui.QWidget):
 
         # Add side toolbar
         self.buttonLayout = QtGui.QVBoxLayout()
-
-        # Add calibration workspace button
-        self.calibration = None
-        self.calibrationWidget = None
-        self.calibrationButton = QtGui.QPushButton('->')
-        self.calibrationButton.setGeometry(0, 0, 64, 64)
-        self.calibrationButton.setCheckable(True)
-        self.calibrationButton.toggled.connect(self.onCalibrationButtonEnabled)
-        self.buttonLayout.addWidget(self.calibrationButton)
-
-        # Add path workspace button
-        self.trajectoryWidget = None
-        self.trajectoryButton = QtGui.QPushButton('path')
-        self.trajectoryButton.setGeometry(0, 0, 64, 64)
-        self.trajectoryButton.setCheckable(True)
-        self.trajectoryButton.toggled.connect(self.onTrajectoryButtonEnabled)
-        self.buttonLayout.addWidget(self.trajectoryButton)
-
-        # Add buttons to layout
-        self.buttonLayout.addStretch(1)
-        button_widget = QtGui.QFrame(None, QtGui.QFrame.Box )
+        self.buttonLayout.setAlignment(QtCore.Qt.AlignTop)
+        button_widget = QtGui.QFrame(None, QtGui.QFrame.Box)
         button_widget.setLayout(self.buttonLayout)
         button_widget.setLineWidth(1)
         button_widget.setFrameShape(QtGui.QFrame.Box)
         button_widget.setFrameShadow(QtGui.QFrame.Sunken)
         self.layout().addWidget(button_widget)
 
-        # Add calibration workspace
-        self.initCalibration()
-        self.initTrajectory()
+        # Workspaces setup:
+        self.workspaces = {}
+        self.default_workspaces = [CalibrationWidget, TrajectoryWidget]
 
-    def initCalibration(self):
-        # Create calibration widget
-        self.calibration = Calibration()
-        self.calibrationWidget = CalibrationWidget(None, self.calibration, self.machine)
-        self.layout().addWidget(self.calibrationWidget)
-        self.onCalibrationButtonDisabled()
+        for workspace in self.default_workspaces:
+            self.addWorkspace(workspace)
 
-    def onCalibrationButtonEnabled(self, checked):
+    def addWorkspace(self, workpaceType):
+        workspaceWidget = workpaceType(None, self.machine)
+        button = QtGui.QPushButton()
+        icon = QtGui.QIcon(workspaceWidget.icon)
+        button.setIcon(icon)
+        button.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        button.setCheckable(True)
+        button.setToolTip(workspaceWidget.tooltip)
+        button.toggled.connect(lambda checked, origin=workspaceWidget.name: self.onWorkspaceButtonEnabled(origin, checked))
+        self.workspaces[workspaceWidget.name] = {'button':button, 'widget':workspaceWidget}
+        self.buttonLayout.addWidget(button)
+        self.layout().addWidget(workspaceWidget)
+        self.onWorkspaceButtonDisabled(workspaceWidget.name)
+
+    def onWorkspaceButtonEnabled(self, workspace, checked):
         if not checked:
-            return self.onCalibrationButtonDisabled()
+            return self.onWorkspaceButtonDisabled(workspace)
 
-        if not self.calibrationWidget.start():
-            self.calibrationButton.setChecked(False)
+        if not self.workspaces[workspace]['widget'].start():
+            self.workspaces[workspace]['button'].setChecked(False)
 
-    def onCalibrationButtonDisabled(self):
-        self.calibrationWidget.abort()
-        self.adjustSize()
-
-    def initTrajectory(self):
-        # Create trajectory widget
-        self.trajectoryWidget = TrajectoryWidget(None, self.machine)
-        self.layout().addWidget(self.trajectoryWidget)
-        self.onTrajectoryButtonDisabled()
-
-    def onTrajectoryButtonEnabled(self, checked):
-        if not checked:
-            return self.onTrajectoryButtonDisabled()
-        self.trajectoryWidget.start()
-
-    def onTrajectoryButtonDisabled(self):
-        self.trajectoryWidget.abort()
+    def onWorkspaceButtonDisabled(self, workspace):
+        self.workspaces[workspace]['widget'].abort()
         self.adjustSize()
 
     def closeEvent(self, event):

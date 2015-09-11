@@ -6,6 +6,7 @@ class WorkspaceWidget(QtGui.QWidget):
 
     name = ""
     icon = ""
+    tooltip = ""
 
     def __init__(self, parent=None, machine=None):
         super(WorkspaceWidget, self).__init__(parent=parent)
@@ -16,16 +17,17 @@ class WorkspaceWidget(QtGui.QWidget):
 
     def start(self):
         self.show()
+        return True
 
     def pause(self):
-        raise NotImplemented
+        self.abort()
 
     def abort(self):
         if self.parent():
             self.hide()
             try:
                 self.parent().adjustSize()
-                self.parent().workspaceButtons[self.name].setChecked(False)
+                self.parent().workspaces[self.name]['button'].setChecked(False)
             except AttributeError, e:
                 print str(e)
         else:
