@@ -18,6 +18,7 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
         self.tooltip = "Trajectory workspace"
         self.machine.add_listener(self)
         self.trajectory = Trajectory()
+        self.trajectory_controller = TrajectoryController()
         self.limits = None
 
 
@@ -234,15 +235,19 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
 
     def onStopButtonClicked(self):
         print "Stop button clicked"
+        self.trajectory_controller.askToStop()
+        # self.stopButton.setEnabled(False)
 
     def onRunButtonClicked(self):
         print "Run button clicked"
         self.runButton.setEnabled(False)
+        self.stopButton.setEnabled(True)
 
         points = self.trajectory.scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
-        TrajectoryController.followTrajectory(points, self.machine, self.limits)
+        self.trajectory_controller.followTrajectory(points, self.machine, self.limits)
 
         self.runButton.setEnabled(True)
+        self.stopButton.setEnabled(False)
 
     def onTrajectorySelectedChanged(self):
         current_traj_choice = self._currentComboBoxIndex(self.trajectoryComboBox)

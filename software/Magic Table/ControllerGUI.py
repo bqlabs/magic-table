@@ -1,6 +1,7 @@
 from PySide import QtCore, QtGui
 from UtilsGUI import load_ui
 import sys, os
+from CoreXY import CoreXY
 
 __author__ = 'def'
 
@@ -213,7 +214,6 @@ class ControllerGUI(QtGui.QWidget):
 
 
 if __name__ == '__main__':
-    from CoreXY import CoreXY
     from SimpleMagnetToolhead import SimpleMagnetToolhead
 
     app = QtGui.QApplication(sys.argv)
