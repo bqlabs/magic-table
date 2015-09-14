@@ -1,6 +1,7 @@
 from PySide import QtCore, QtGui
 from UtilsGUI import load_ui
 import sys, os
+import time
 from CoreXY import CoreXY
 from CoreXYEventListener import CoreXYEventListener
 from Calibration import Calibration
@@ -125,12 +126,19 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
     def update(self):
         self.updateImage()
 
+    # def resetInputValues(self):
+    #     self.stepSpinBox.setValue(1)
+    #     self.xOffsetSpinBox.setValue(0)
+    #     self.yOffsetSpinBox.setValue(0)
+    #     self.xScaleSpinBox.setValue(1)
+    #     self.yScaleSpinBox.setValue(1)
+
     def resetInputValues(self):
-        self.stepSpinBox.setValue(1)
+        self.stepSpinBox.setValue(20)
         self.xOffsetSpinBox.setValue(0)
-        self.yOffsetSpinBox.setValue(0)
-        self.xScaleSpinBox.setValue(1)
-        self.yScaleSpinBox.setValue(1)
+        self.yOffsetSpinBox.setValue(-10)
+        self.xScaleSpinBox.setValue(0.8)
+        self.yScaleSpinBox.setValue(0.8)
 
     @staticmethod
     def _currentComboBoxIndex(combobox):
@@ -257,7 +265,6 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
     def onStopButtonClicked(self):
         print "Stop button clicked"
         self.trajectory_controller.askToStop()
-        # self.stopButton.setEnabled(False)
 
     def onRunButtonClicked(self):
         print "Run button clicked"
@@ -268,7 +275,6 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
         points = self.trajectory.scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
         self.trajectory_controller.prepare(points, self.machine, self.limits)
         self.trajectory_controller.start()
-        # self.trajectory_controller.followTrajectory(points, self.machine, self.limits)
 
     def onTrajectoryFinish(self):
         self.runButton.setEnabled(True)
@@ -310,12 +316,20 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
     def abort(self):
         if self.trajectory_controller.isRunning():
             self.trajectory_controller.askToStop()
+
+            if self.trajectory_controller.isRunning():
+                i = 0
+                while i < 100:
+                    time.sleep(0.1)
+                    i += 1
+                    if self.trajectory_controller.isFinished():
+                        print "Abort: Finished thread"
+                        break
+                else:
+                    print "Terminating move thread"
+                    self.trajectory_controller.terminate()
+
         super(TrajectoryWidget, self).abort()
-        
-    def closeEvent(self, event):
-        super(TrajectoryWidget, self).closeEvent(event)
-        if self.trajectory_controller.isRunning():
-            self.trajectory_controller.terminate()
 
 
 if __name__ == '__main__':

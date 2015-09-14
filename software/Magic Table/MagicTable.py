@@ -74,6 +74,10 @@ class MagicTableMainWindow(QtGui.QWidget):
         self.adjustSize()
 
     def closeEvent(self, event):
+
+        for name, data in self.workspaces.iteritems():
+            data['widget'].abort()
+
         try:
             if self.machine:
                 self.machine.disconnect()

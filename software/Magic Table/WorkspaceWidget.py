@@ -35,6 +35,8 @@ class WorkspaceWidget(QtGui.QWidget):
 
     # Widget events
     def closeEvent(self, event):
+        self.abort()
+
         if self.machine:
             if self.machine.toolhead:
                 self.machine.toolhead.set_magnets_off()
