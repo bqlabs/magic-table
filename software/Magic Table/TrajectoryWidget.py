@@ -307,6 +307,11 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
     def on_move(self, x, y):
         pass
 
+    def abort(self):
+        if self.trajectory_controller.isRunning():
+            self.trajectory_controller.askToStop()
+        super(TrajectoryWidget, self).abort()
+        
     def closeEvent(self, event):
         super(TrajectoryWidget, self).closeEvent(event)
         if self.trajectory_controller.isRunning():
