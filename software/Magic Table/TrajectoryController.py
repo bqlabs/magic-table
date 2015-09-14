@@ -51,7 +51,7 @@ class TrajectoryController(object):
             self.lock.acquire()
             if self.stop:
                 self.lock.release()
-                break
+                return False
             self.lock.release()
 
-
+        return True

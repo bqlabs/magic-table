@@ -10,6 +10,26 @@ from WorkspaceWidget import WorkspaceWidget
 
 __author__ = 'def'
 
+class TrajectoryControllerThread(QtCore.QThread):
+    def __init__(self, parent=None):
+        super(TrajectoryControllerThread, self).__init__(parent)
+        self.trajectoryController = TrajectoryController()
+        self.args = None
+        self.kwargs = None
+
+    def prepare(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        self.trajectoryController.followTrajectory(*self.args, **self.kwargs)
+        self.args = None
+        self.kwargs = None
+
+    def askToStop(self):
+        self.trajectoryController.askToStop()
+
+
 class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
     def __init__(self, parent, machine):
         super(TrajectoryWidget, self).__init__(parent, machine)
@@ -18,7 +38,7 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
         self.tooltip = "Trajectory workspace"
         self.machine.add_listener(self)
         self.trajectory = Trajectory()
-        self.trajectory_controller = TrajectoryController()
+        self.trajectory_controller = TrajectoryControllerThread()
         self.limits = None
 
 
@@ -100,6 +120,7 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
         self.runButton.setEnabled(False)
         self.stopButton.setEnabled(False)
         self.setTrajectoryControlsEnabled(False)
+        self.trajectory_controller.finished.connect(self.onTrajectoryFinish)
 
     def update(self):
         self.updateImage()
@@ -243,9 +264,13 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
         self.runButton.setEnabled(False)
         self.stopButton.setEnabled(True)
 
-        points = self.trajectory.scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
-        self.trajectory_controller.followTrajectory(points, self.machine, self.limits)
 
+        points = self.trajectory.scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
+        self.trajectory_controller.prepare(points, self.machine, self.limits)
+        self.trajectory_controller.start()
+        # self.trajectory_controller.followTrajectory(points, self.machine, self.limits)
+
+    def onTrajectoryFinish(self):
         self.runButton.setEnabled(True)
         self.stopButton.setEnabled(False)
 
@@ -281,6 +306,11 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
 
     def on_move(self, x, y):
         pass
+
+    def closeEvent(self, event):
+        super(TrajectoryWidget, self).closeEvent(event)
+        if self.trajectory_controller.isRunning():
+            self.trajectory_controller.terminate()
 
 
 if __name__ == '__main__':
