@@ -126,19 +126,19 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
     def update(self):
         self.updateImage()
 
-    def resetInputValues(self):
-        self.stepSpinBox.setValue(1)
-        self.xOffsetSpinBox.setValue(0)
-        self.yOffsetSpinBox.setValue(0)
-        self.xScaleSpinBox.setValue(1)
-        self.yScaleSpinBox.setValue(1)
-
     # def resetInputValues(self):
-    #     self.stepSpinBox.setValue(20)
+    #     self.stepSpinBox.setValue(1)
     #     self.xOffsetSpinBox.setValue(0)
-    #     self.yOffsetSpinBox.setValue(-10)
-    #     self.xScaleSpinBox.setValue(0.8)
-    #     self.yScaleSpinBox.setValue(0.8)
+    #     self.yOffsetSpinBox.setValue(0)
+    #     self.xScaleSpinBox.setValue(1)
+    #     self.yScaleSpinBox.setValue(1)
+
+    def resetInputValues(self):
+        self.stepSpinBox.setValue(20)
+        self.xOffsetSpinBox.setValue(0)
+        self.yOffsetSpinBox.setValue(-10)
+        self.xScaleSpinBox.setValue(0.8)
+        self.yScaleSpinBox.setValue(0.8)
 
     @staticmethod
     def _currentComboBoxIndex(combobox):
@@ -271,9 +271,8 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
         self.runButton.setEnabled(False)
         self.stopButton.setEnabled(True)
 
-
         points = self.trajectory.scale(self.calculateTrajectoryFromParams(), 1/480.0, 1/339.0)
-        self.trajectory_controller.prepare(points, self.machine, self.limits)
+        self.trajectory_controller.prepare(points, self.machine, self.limits, delay=0.1/20*self.stepSpinBox.value())
         self.trajectory_controller.start()
 
     def onTrajectoryFinish(self):
