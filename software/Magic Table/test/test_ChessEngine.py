@@ -53,6 +53,15 @@ class ChessEngineTest(unittest.TestCase):
         engine.set_board(self.initial_board_description)
         self.assertEqual(engine.board, expected_result)
 
+    def test_tile_to_coord(self):
+        self.fail("Test not implemented")
+
+    def test_coord_to_tile(self):
+        self.fail("Test not implemented")
+
+    def test_valid_moves(self):
+        self.fail("Test not implemented")
+
 
     def test_move(self):
         commands_to_test = ['e4', 'e5', 'Qh5', 'Nc6', 'Bc4', 'Nf6']
