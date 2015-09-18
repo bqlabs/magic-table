@@ -86,7 +86,7 @@ class MagicTableMainWindow(QtGui.QWidget):
             event.ignore()
 
 
-if __name__ == '__main__':
+def main():
     from CoreXY import CoreXY
     from SimpleMagnetToolhead import SimpleMagnetToolhead
 
@@ -100,3 +100,22 @@ if __name__ == '__main__':
     gui.show()
 
     sys.exit(app.exec_())
+
+def main_mockup():
+    from CoreXYMockup import CoreXYMockup
+    from SimpleMagnetToolheadMockup import SimpleMagnetToolheadMockup
+
+    app = QtGui.QApplication(sys.argv)
+
+    cxy = CoreXYMockup()
+    tool = SimpleMagnetToolheadMockup(4,5)
+    cxy.set_toolhead(tool)
+
+    gui = MagicTableMainWindow(cxy)
+    gui.show()
+
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    # main()
+    main_mockup()
