@@ -7,6 +7,10 @@ class SimpleMagnetToolheadMockup(SimpleMagnetToolhead):
     def __init__(self, *args):
         self.command_storage = None
         self.type = 'SimpleMagnetMockup'
+        self.magnets = []
+
+        for arg in args:
+            self.add_magnet(arg)
 
     def set_magnet(self, id, status):
         try:
