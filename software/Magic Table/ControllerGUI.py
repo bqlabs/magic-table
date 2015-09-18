@@ -91,6 +91,10 @@ class ControllerGUI(QtGui.QWidget):
             from SimpleMagnetToolhead import SimpleMagnetToolheadWidget
             w = SimpleMagnetToolheadWidget(None, self.machine.toolhead)
             self.toolsGroupBox.setLayout(w)
+        elif self.machine.toolhead.type == 'SimpleMagnetMockup':
+            from SimpleMagnetToolheadMockup import SimpleMagnetToolheadMockupWidget
+            w = SimpleMagnetToolheadMockupWidget(None, self.machine)
+            self.toolsGroupBox.setLayout(w)
         else:
             raise AttributeError("Toolhead type not supported yet!")
 

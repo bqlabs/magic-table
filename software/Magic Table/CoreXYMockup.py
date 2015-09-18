@@ -9,11 +9,12 @@ __author__ = 'def'
 class CoreXYMockup(CoreXY):
 
     def __init__(self, port = None, baudrate=None):
+        super(CoreXY, self).__init__()
         self.port = port
         self.baudrate = baudrate
         self.comm = None
 
-        self.command_storage = ''
+        self.command_storage = []
 
         self.x = None
         self.y = None
@@ -27,12 +28,16 @@ class CoreXYMockup(CoreXY):
         self._notify_listeners("disconnect")
 
     def reset(self):
-        self.command_storage = ''
+        try:
+            self.command_storage[:] = []
+        except TypeError:
+            pass
 
 
     # Movement
     def home(self):
-        self.command_storage = self.home_cmd
+        self.reset()
+        self.command_storage.append(self.home_cmd)
         self.x = 0
         self.y = 0
         self._notify_listeners("home")
@@ -40,7 +45,7 @@ class CoreXYMockup(CoreXY):
 
     def move(self, x, y, speed=None):
         if 0 <= x <= self.x_limit and 0 <= y <= self.y_limit:
-            self.command_storage += "G1 F6000 X%s Y%s\n" % (x, y)
+            self.command_storage.append("G1 F6000 X%s Y%s\n" % (x, y))
             self.x, self.y = x, y
             self._notify_listeners("move", self.x, self.y)
         else:
@@ -50,7 +55,7 @@ class CoreXYMockup(CoreXY):
         new_x = self.clip(self.x + inc_x, 0, self.x_limit)
         new_y = self.clip(self.y + inc_y, 0, self.y_limit)
 
-        self.command_storage +"G1 F6000 X%s Y%s\n" % (new_x, new_y)
+        self.command_storage.append("G1 F6000 X%s Y%s\n" % (new_x, new_y))
         self.x, self.y = new_x, new_y
 
         self._notify_listeners("move", self.x, self.y)
@@ -64,8 +69,8 @@ class CoreXYMockup(CoreXY):
     # Mockup functions
     def save_to_file(self, filename):
         with open(filename, 'w') as f:
-            f.write(self.command_storage)
+            f.writelines(self.command_storage)
         self.clear_commands()
 
     def clear_commands(self):
-        self.command_storage = ''
+        self.reset()

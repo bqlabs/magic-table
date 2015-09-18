@@ -279,11 +279,6 @@ class TrajectoryWidget(WorkspaceWidget, CoreXYEventListener):
         self.runButton.setEnabled(True)
         self.stopButton.setEnabled(False)
 
-        try:
-            self.machine.save_to_file(self, 'trajectory_out.gcode')
-        except AttributeError, e:
-            print "Not a mockup object!\n" + str(e)
-
     def onTrajectorySelectedChanged(self):
         current_traj_choice = self._currentComboBoxIndex(self.trajectoryComboBox)
         start_point_choices = ["Point #%d" % i for i, element in \
