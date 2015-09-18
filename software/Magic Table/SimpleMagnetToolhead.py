@@ -3,7 +3,7 @@
 __author__ = 'def'
 
 
-class SimpleMagnetToolhead:
+class SimpleMagnetToolhead(object):
     def __init__(self, *args):
         self.comm = None
         self.type = 'SimpleMagnet'
