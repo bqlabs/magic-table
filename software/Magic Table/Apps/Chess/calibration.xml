@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Magic Table Calibration file-->
+<calibration>
+    <image>
+        <name>Chess.jpg</name>
+    </image>
+    
+    <point>
+        <name>A1</name>
+        <symbol>A1</symbol>
+        <coordinates x="170" y="50"/>
+    </point>
+    
+    <point>
+        <name>B2</name>
+        <symbol>B2</symbol>
+        <coordinates x="240" y="120"/>
+    </point>
+    
+    <point>
+        <name>C3</name>
+        <symbol>C3</symbol>
+        <coordinates x="310" y="190"/>
+    </point>
+    
+    <point>
+        <name>D4</name>
+        <symbol>D4</symbol>
+        <coordinates x="380" y="260"/>
+    </point>
+    
+    <point>
+        <name>E5</name>
+        <symbol>E5</symbol>
+        <coordinates x="450" y="330"/>
+    </point>
+    
+    <point>
+        <name>F6</name>
+        <symbol>F6</symbol>
+        <coordinates x="520" y="400"/>
+    </point>
+    
+    <point>
+        <name>G7</name>
+        <symbol>G7</symbol>
+        <coordinates x="590" y="470"/>
+    </point>
+    
+    <point>
+        <name>H8</name>
+        <symbol>H8</symbol>
+        <coordinates x="660" y="540"/>
+    </point>
+
+    <point>
+        <name>Out White</name>
+        <symbol>out_white</symbol>
+        <coordinates x="60" y="290"/>
+    </point>
+
+    <point>
+        <name>Out Black</name>
+        <symbol>out_black</symbol>
+        <coordinates x="780" y="290"/>
+    </point>
+    
+
+</calibration>
