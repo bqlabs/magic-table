@@ -14,11 +14,11 @@ calibration_file = os.path.realpath(os.path.join(os.path.dirname(__file__), 'App
                              'Chess', 'calibration-out.xml'))
 
 
-def pick_and_place(machine, pick, place):
+def pick_and_place(machine, pick, place, v_pick=150, v_place=80):
     print 'Move to : (%d, %d) -> (%d, %d)' % (pick[0], pick[1], place[0], place[1])
-    machine.move(pick[0], pick[1])
+    machine.move(pick[0], pick[1], v_pick)
     machine.toolhead.set_magnet(1, 'on')
-    machine.move(place[0], place[1])
+    machine.move(place[0], place[1], v_place)
     machine.toolhead.set_magnet(1, 'off')
 
 def chess_to_coord(chess, table):
@@ -45,14 +45,39 @@ def main(machine):
     machine.home()
 
     # Movements:
+    # --------------------------------------------------------------------------------------
+    # Capture attacking piece
     out_point = chess_to_coord('B0', table) #[0], calibration.real_points['out_white'][1])
     pick_and_place(machine, chess_to_coord('B4', table), out_point)
     t.sleep(1)
-    pick_and_place(machine, chess_to_coord('B7', table), chess_to_coord('B4', table))
-    t.sleep(1)
+
+    # Simple movements
+    # --------------------------------------------------------------------------------------
+
+    movement_list = [('B7', 'B4'),
+                     ('E6', 'D5'),
+                     ('H1', 'H5'),
+                     ('D5', 'D6'),
+                     ('B4','B6'),
+                     ('D6','C7'),
+                     ('B6','F6'),
+                     ('C7','D7'),
+                     ('H5','H7'),
+                     ('D7','D8'),
+                     ('F6','F8')]
+
+    for origin, destination in movement_list:
+        pick_and_place(machine, chess_to_coord(origin, table), chess_to_coord(destination, table))
+        t.sleep(5)
+
 
     # End
     machine.home()
+
+    try:
+        cxy.save_to_file('chess.gcode')
+    except AttributeError:
+        pass
     machine.disconnect()
 
 
@@ -67,4 +92,7 @@ if __name__ == '__main__':
         tool = SimpleMagnetToolheadMockup(4,5)
 
     cxy.set_toolhead(tool)
-    main(cxy)
+    try:
+        main(cxy)
+    except:
+        cxy.disconnect()
