@@ -46,14 +46,19 @@ def main(machine):
 
     # Movements:
     # --------------------------------------------------------------------------------------
+    # Setup initial configuration
+    setup_movements = [('A1', 'B4'), ('A8', 'B7'), ('H8', 'E6'), ('D1', 'D2')]
+    for origin, destination in setup_movements:
+        pick_and_place(machine, chess_to_coord(origin, table), chess_to_coord(destination, table))
+        t.sleep(5)
+    machine.home()
+
     # Capture attacking piece
     out_point = chess_to_coord('B0', table) #[0], calibration.real_points['out_white'][1])
     pick_and_place(machine, chess_to_coord('B4', table), out_point)
     t.sleep(1)
 
     # Simple movements
-    # --------------------------------------------------------------------------------------
-
     movement_list = [('B7', 'B4'),
                      ('E6', 'D5'),
                      ('H1', 'H5'),
@@ -69,7 +74,14 @@ def main(machine):
     for origin, destination in movement_list:
         pick_and_place(machine, chess_to_coord(origin, table), chess_to_coord(destination, table))
         t.sleep(5)
+    machine.home()
 
+    # Restore initial position
+    cleanup_movements = [('H7', 'H1'), ('D2', 'D1'), ('B0', 'A1'), ('F8', 'F4'), ('D8', 'H8'), ('F4', 'A8')]
+    for origin, destination in cleanup_movements:
+        pick_and_place(machine, chess_to_coord(origin, table), chess_to_coord(destination, table))
+        t.sleep(5)
+    machine.home()
 
     # End
     machine.home()
@@ -82,7 +94,7 @@ def main(machine):
 
 
 if __name__ == '__main__':
-    mockup = False
+    mockup = True
 
     if not mockup:
         cxy = CoreXY()
